@@ -1,0 +1,71 @@
+/**
+ * Strength Radar Chart Styles
+ * CSS Modules - Strict Style Isolation
+ */
+
+.radarChart {
+  background: white;
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: var(--spacing-lg);
+}
+
+.chartTitle {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-md);
+  text-align: center;
+}
+
+.chartPlaceholder {
+  width: 100%;
+  min-height: 200px;
+}
+
+.chartGrid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.chartItem {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.chartLabel {
+  min-width: 100px;
+  font-weight: 600;
+  color: var(--color-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.chartBar {
+  flex: 1;
+  height: 24px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius-sm);
+  overflow: hidden;
+}
+
+.chartFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-success));
+  transition: width 0.5s ease;
+  border-radius: var(--border-radius-sm);
+}
+
+.chartValue {
+  min-width: 60px;
+  text-align: right;
+  font-weight: 600;
+  color: var(--color-primary);
+  font-size: var(--font-size-sm);
+}
+
+.cappedIndicator {
+  color: var(--color-warning);
+  margin-left: var(--spacing-xs);
+}

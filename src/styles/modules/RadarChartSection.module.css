@@ -1,0 +1,185 @@
+/**
+ * Radar Chart Section Styles
+ * CSS Modules - Strict Style Isolation
+ */
+
+.radarSection {
+  padding: var(--spacing-xl);
+  background-color: white;
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: var(--spacing-lg);
+}
+
+.title {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xxl);
+  gap: var(--spacing-md);
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.completionStatus {
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-md);
+  background-color: rgba(0, 123, 255, 0.05);
+  border-radius: var(--border-radius-md);
+}
+
+.completionText {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-xs);
+}
+
+.completionBar {
+  width: 100%;
+  height: 8px;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius-sm);
+  overflow: hidden;
+}
+
+.completionFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-success));
+  transition: width 0.5s ease;
+  border-radius: var(--border-radius-sm);
+}
+
+.chartContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.chartPlaceholder {
+  width: 100%;
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8f9fa;
+  border-radius: var(--border-radius-md);
+  border: 2px dashed rgba(0, 0, 0, 0.1);
+}
+
+.chartGrid {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chartNote {
+  text-align: center;
+  color: var(--color-secondary);
+}
+
+.chartNote p {
+  margin: var(--spacing-xs) 0;
+}
+
+.chartSubnote {
+  font-size: var(--font-size-sm);
+  font-style: italic;
+}
+
+.metricsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.metricItem {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.metricLabel {
+  min-width: 80px;
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  color: var(--color-primary);
+}
+
+.metricBar {
+  flex: 1;
+  height: 24px;
+  background-color: #e9ecef;
+  border-radius: var(--border-radius-sm);
+  overflow: hidden;
+  position: relative;
+}
+
+.metricFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-info));
+  transition: width 0.5s ease;
+  border-radius: var(--border-radius-sm);
+}
+
+.metricValue {
+  min-width: 50px;
+  text-align: right;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .radarSection {
+    padding: var(--spacing-lg);
+  }
+
+  .chartPlaceholder {
+    min-height: 200px;
+  }
+
+  .metricItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-xs);
+  }
+
+  .metricLabel {
+    min-width: auto;
+  }
+
+  .metricBar {
+    width: 100%;
+  }
+
+  .metricValue {
+    min-width: auto;
+    text-align: left;
+  }
+}

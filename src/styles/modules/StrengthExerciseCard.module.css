@@ -1,0 +1,201 @@
+/**
+ * Strength Exercise Card Styles
+ * CSS Modules - Strict Style Isolation
+ */
+
+.exerciseCard {
+  background: white;
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.exerciseCard:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.exerciseCard.completed {
+  border: 2px solid var(--color-success);
+}
+
+.exerciseHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md);
+  cursor: pointer;
+  background: rgba(0, 123, 255, 0.05);
+  transition: background 0.3s ease;
+}
+
+.exerciseHeader:hover {
+  background: rgba(0, 123, 255, 0.1);
+}
+
+.exerciseHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.exerciseIcon {
+  width: 24px;
+  height: 24px;
+  background: var(--color-primary);
+  border-radius: 50%;
+}
+
+.exerciseName {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-primary);
+  margin: 0;
+}
+
+.exerciseHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.scoreBadge {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--color-success);
+  color: white;
+  border-radius: var(--border-radius-sm);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+}
+
+.expandArrow {
+  font-size: var(--font-size-sm);
+  color: var(--color-secondary);
+  transition: transform 0.3s ease;
+}
+
+.expandArrow.expanded {
+  transform: rotate(180deg);
+}
+
+.exerciseContent {
+  padding: var(--spacing-md);
+}
+
+.exerciseInputs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.inputGroup label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-secondary);
+}
+
+.inputField {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-base);
+  transition: border-color 0.3s ease;
+}
+
+.inputField:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.calculateBtn {
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.calculateBtn:hover:not(:disabled) {
+  background: #0056b3;
+  transform: translateY(-2px);
+}
+
+.calculateBtn:disabled {
+  background: var(--color-secondary);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.exerciseResult {
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: rgba(0, 123, 255, 0.05);
+  border-radius: var(--border-radius-md);
+}
+
+.maxStrength {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.scoreDisplay {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.verifiedBadge {
+  color: var(--color-success);
+  font-weight: 600;
+  margin-left: var(--spacing-xs);
+}
+
+.cappedWarning {
+  font-size: var(--font-size-sm);
+  color: var(--color-warning);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.unlockBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: 9999px;
+  width: fit-content;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(234, 179, 8, 0.5);
+  cursor: pointer;
+  margin-top: var(--spacing-sm);
+  transition: all 0.3s ease;
+}
+
+.unlockBtn:hover {
+  background: rgba(0, 0, 0, 0.8);
+  border-color: rgba(234, 179, 8, 0.8);
+}
+
+.unlockIcon {
+  font-size: var(--font-size-sm);
+}
+
+.unlockText {
+  font-size: var(--font-size-sm);
+  color: #facc15;
+  font-weight: 500;
+}

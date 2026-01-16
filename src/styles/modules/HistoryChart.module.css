@@ -1,0 +1,74 @@
+/**
+ * History Chart Styles
+ * CSS Modules - Strict Style Isolation
+ */
+
+.chartContainer {
+  background: white;
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: var(--spacing-lg);
+  margin-top: var(--spacing-xl);
+}
+
+.chartHeader {
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
+.chartTitle {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.chartNote {
+  font-size: var(--font-size-sm);
+  color: var(--color-secondary);
+  margin-bottom: var(--spacing-md);
+}
+
+.chartSelector {
+  display: flex;
+  justify-content: center;
+}
+
+.chartSelect {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-base);
+  background: white;
+  color: var(--color-secondary);
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+.chartSelect:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.chartWrapper {
+  width: 100%;
+  overflow-x: auto;
+  padding: var(--spacing-md);
+}
+
+.chart {
+  width: 100%;
+  min-width: 800px;
+  height: auto;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .chartWrapper {
+    padding: var(--spacing-xs);
+  }
+  
+  .chart {
+    min-width: 600px;
+  }
+}

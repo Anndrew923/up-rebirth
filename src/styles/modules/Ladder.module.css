@@ -1,0 +1,54 @@
+/**
+ * Main Ladder Component Styles
+ * CSS Modules - Strict Style Isolation
+ */
+
+.ladder {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.contentArea {
+  padding: var(--spacing-lg);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footer {
+  padding: var(--spacing-lg);
+  text-align: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footerText {
+  font-size: var(--font-size-sm);
+  color: var(--color-secondary);
+  font-style: italic;
+  margin: 0;
+}
+
+.userCardModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .contentArea {
+    padding: var(--spacing-md);
+  }
+
+  .footer {
+    padding: var(--spacing-md);
+  }
+}

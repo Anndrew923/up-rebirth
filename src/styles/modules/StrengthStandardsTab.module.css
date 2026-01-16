@@ -1,0 +1,36 @@
+/**
+ * Strength Standards Tab Styles
+ * CSS Modules - Strict Style Isolation
+ */
+
+.standardsTab {
+  background: white;
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: var(--spacing-xl);
+  min-height: 400px;
+}
+
+.standardsTitle {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
+.standardsContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-xxl);
+  text-align: center;
+}
+
+.standardsNote {
+  font-size: var(--font-size-sm);
+  color: var(--color-secondary);
+  font-style: italic;
+}

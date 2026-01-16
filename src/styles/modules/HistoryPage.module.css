@@ -1,0 +1,241 @@
+/**
+ * History Page Styles
+ * CSS Modules - Strict Style Isolation
+ * Part of Phase 4.3 Rebirth Migration
+ */
+
+.historyContainer {
+  padding: var(--spacing-lg);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.title {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-xl);
+  text-align: center;
+}
+
+.historyTableSection {
+  margin-bottom: var(--spacing-xl);
+}
+
+.scoreLegend {
+  background: white;
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.legendTitle {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-secondary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.legendItems {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+}
+
+.legendItem {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+}
+
+.scoreExcellent {
+  background: rgba(40, 167, 69, 0.1);
+  color: var(--color-success);
+}
+
+.scoreGood {
+  background: rgba(0, 123, 255, 0.1);
+  color: var(--color-primary);
+}
+
+.scoreFair {
+  background: rgba(255, 193, 7, 0.1);
+  color: var(--color-warning);
+}
+
+.scorePoor {
+  background: rgba(220, 53, 69, 0.1);
+  color: var(--color-danger);
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin: var(--spacing-lg) 0;
+}
+
+.paginationBtn {
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.paginationBtn:hover:not(:disabled) {
+  background: #0056b3;
+  transform: translateY(-2px);
+}
+
+.paginationBtn:disabled {
+  background: var(--color-secondary);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.pageInfo {
+  font-weight: 600;
+  color: var(--color-secondary);
+}
+
+.actionButtons {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin: var(--spacing-md) 0;
+  flex-wrap: wrap;
+}
+
+.toggleDeleteBtn {
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-secondary);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.toggleDeleteBtn:hover {
+  background: #5a6268;
+  transform: translateY(-2px);
+}
+
+.editModeBtn {
+  background: var(--color-warning);
+}
+
+.editModeBtn:hover {
+  background: #e0a800;
+}
+
+.cancelDeleteBtn {
+  background: var(--color-secondary);
+}
+
+.deleteSelectedBtn {
+  background: var(--color-danger);
+}
+
+.deleteSelectedBtn:hover {
+  background: #c82333;
+}
+
+.mobileToggleBtn {
+  display: block;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .mobileToggleBtn {
+    display: none;
+  }
+}
+
+.historyStats {
+  background: white;
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: var(--spacing-lg);
+  margin-top: var(--spacing-lg);
+}
+
+.statsAndActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.recordCount {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.countLabel {
+  font-size: var(--font-size-sm);
+  color: var(--color-secondary);
+}
+
+.countValue {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.countValue.nearLimit {
+  color: var(--color-warning);
+}
+
+.countValue.atLimit {
+  color: var(--color-danger);
+}
+
+.limitWarning {
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-sm);
+  background: rgba(255, 193, 7, 0.1);
+  color: var(--color-warning);
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-sm);
+  text-align: center;
+}
+
+.limitError {
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-sm);
+  background: rgba(220, 53, 69, 0.1);
+  color: var(--color-danger);
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-sm);
+  text-align: center;
+  font-weight: 600;
+}
+
+.noHistory {
+  background: white;
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: var(--spacing-xxl);
+  text-align: center;
+}
+
+.noHistory h3 {
+  font-size: var(--font-size-lg);
+  color: var(--color-secondary);
+  margin-bottom: var(--spacing-md);
+}
+
+.noHistory p {
+  color: var(--color-secondary);
+  margin: var(--spacing-sm) 0;
+}

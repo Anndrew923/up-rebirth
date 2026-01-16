@@ -1,0 +1,116 @@
+/**
+ * Strength Page Styles
+ * CSS Modules - Strict Style Isolation
+ * Part of Phase 4.2 Rebirth Migration
+ */
+
+.strengthContainer {
+  padding: var(--spacing-lg);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.strengthHeader {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+}
+
+.strengthTitle {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.strengthSafetyNote {
+  font-size: var(--font-size-sm);
+  color: var(--color-secondary);
+  margin-top: var(--spacing-sm);
+}
+
+.tabNavigation {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
+  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+.tabBtn {
+  flex: 1;
+  padding: var(--spacing-md);
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  font-size: var(--font-size-base);
+  color: var(--color-secondary);
+  transition: all 0.3s ease;
+}
+
+.tabBtn:hover {
+  color: var(--color-primary);
+  background: rgba(0, 123, 255, 0.05);
+}
+
+.tabBtn.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+  font-weight: 600;
+}
+
+.exercisesTab {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.exercisesGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-md);
+}
+
+@media (min-width: 768px) {
+  .exercisesGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.resultsSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  margin-top: var(--spacing-xl);
+}
+
+.submitSection {
+  margin-top: var(--spacing-xl);
+  padding: var(--spacing-lg);
+  display: flex;
+  justify-content: center;
+}
+
+.submitBtn {
+  padding: var(--spacing-md) var(--spacing-xl);
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 200px;
+}
+
+.submitBtn:hover:not(:disabled) {
+  background: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.submitBtn:disabled {
+  background: var(--color-secondary);
+  cursor: not-allowed;
+  opacity: 0.6;
+}

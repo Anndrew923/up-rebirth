@@ -1,0 +1,119 @@
+/**
+ * Magitek Resonance 2.0 Chassis Styles
+ * Three-Layer Architecture System
+ * 
+ * Strict Style Isolation: CSS Modules only
+ * No global CSS - Design tokens from :root in index.css
+ */
+
+.chassis {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ============================================
+   Background Layer - Ambient effects
+   ============================================ */
+.backgroundLayer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  /* Background decorative elements can be added here */
+}
+
+/* ============================================
+   ScrollContent Layer - Main scrollable content
+   ============================================ */
+.scrollContentLayer {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.scrollContent {
+  width: 100%;
+  min-height: 100vh;
+  /* Content padding and layout can be customized per page */
+}
+
+/* ============================================
+   Foreground Layer - Fixed UI, modals, overlays
+   ============================================ */
+.foregroundLayer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  pointer-events: none;
+  /* Hidden by default, activated when overlays are visible */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+}
+
+.foregroundLayer.overlayActive {
+  pointer-events: auto;
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Overlay backdrop */
+.overlayBackdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 1001;
+}
+
+/* Modal container */
+.modalContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1002;
+  pointer-events: none;
+}
+
+/* Ensure modals are clickable */
+.modalContainer > * {
+  pointer-events: auto;
+}
+
+/* ============================================
+   Responsive adjustments
+   ============================================ */
+@media (max-width: 768px) {
+  .scrollContentLayer {
+    /* Mobile-specific scroll behavior */
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .overlayBackdrop {
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+  }
+}
