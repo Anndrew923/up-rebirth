@@ -135,30 +135,43 @@ export const useAuth = () => {
       setLoading(true);
       setLoadingMessage('正在使用 Google 登入...');
       
-      // Try Capacitor Google Auth first (for native platforms)
-      try {
-        const result = await signInWithCapacitorGoogle();
-        if (result.success) {
+      // Check if running on native platform
+      const { Capacitor } = await import('@capacitor/core');
+      
+      if (Capacitor.isNativePlatform()) {
+        // Use Capacitor Google Auth for native platforms
+        try {
+          const result = await signInWithCapacitorGoogle();
+          if (result.success) {
+            setLoadingMessage(null);
+            setLoading(false);
+            return { success: true };
+          } else {
+            throw new Error(result.error || 'Google 登入失敗');
+          }
+        } catch (capacitorError) {
+          const errorMessage = sanitizeAuthError(capacitorError);
+          setError(errorMessage);
           setLoadingMessage(null);
           setLoading(false);
-          return { success: true };
+          return { success: false, error: errorMessage };
         }
-      } catch (capacitorError) {
-        // Fallback to web popup if Capacitor fails or not on native platform
-        const { Capacitor } = await import('@capacitor/core');
-        if (!Capacitor.isNativePlatform()) {
+      } else {
+        // Use Firebase web popup for web platforms
+        try {
           const provider = new GoogleAuthProvider();
           await signInWithPopup(auth, provider);
           setLoadingMessage(null);
           setLoading(false);
           return { success: true };
+        } catch (popupError) {
+          const errorMessage = sanitizeAuthError(popupError);
+          setError(errorMessage);
+          setLoadingMessage(null);
+          setLoading(false);
+          return { success: false, error: errorMessage };
         }
-        throw capacitorError;
       }
-      
-      setLoadingMessage(null);
-      setLoading(false);
-      return { success: true };
     } catch (err) {
       const errorMessage = sanitizeAuthError(err);
       setError(errorMessage);
