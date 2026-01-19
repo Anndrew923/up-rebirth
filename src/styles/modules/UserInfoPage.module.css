@@ -6,110 +6,14 @@
 .scrollRoot {
   width: 100%;
   min-height: 100vh;
-  padding-bottom: 96px; /* keep above TempNav dock */
-}
-
-.hudSpacer {
-  height: calc(92px + env(safe-area-inset-top));
 }
 
 .contentShell {
-  width: min(980px, 100%);
-  margin: 0 auto;
-  padding: 0 18px 36px;
-}
-
-/* -----------------------------
-   Foreground Layer (HUD)
------------------------------- */
-.foregroundRoot {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  pointer-events: none;
-}
-
-.hudTop {
-  position: fixed;
-  top: 0;
-  left: 0;
   width: 100%;
-  height: calc(92px + env(safe-area-inset-top));
-  pointer-events: none;
-}
-
-.hudTopBarImage {
-  position: absolute;
-  top: env(safe-area-inset-top);
-  left: 12px;
-  width: 598px;
-  height: 191px;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: left top;
-  z-index: 3;
-  pointer-events: none;
-  transform-origin: left top;
-  transform: scale(0.62);
-}
-
-/* Avatar positioned BEHIND the HUD image (through the transparent window) */
-.hudAvatarBehind {
-  position: absolute;
-  top: calc(env(safe-area-inset-top) + 14px);
-  left: 18px;
-  z-index: 2;
-  pointer-events: auto; /* allow avatar upload click */
-}
-
-/* Buttons over the HUD */
-.hudButtons {
-  position: absolute;
-  top: calc(env(safe-area-inset-top) + 16px);
-  right: 14px;
-  display: flex;
-  gap: 10px;
-  z-index: 4;
-  pointer-events: auto;
-}
-
-.hudButton {
-  width: 44px;
-  height: 44px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  background: rgba(0, 0, 0, 0.35);
-  color: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  cursor: pointer;
-}
-
-.hudButton:active {
-  transform: scale(0.98);
-}
-
-/* Side rails */
-.sideRail {
-  position: fixed;
-  top: calc(92px + env(safe-area-inset-top));
-  bottom: 86px; /* above TempNav dock */
-  width: 44px;
-  background-size: contain;
-  background-repeat: repeat-y;
-  background-position: center top;
-  opacity: 0.92;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.sideRailRight {
-  right: 0;
-}
-
-.sideRailLeft {
-  left: 0;
-  transform: scaleX(-1);
+  max-width: none;
+  margin: 0;
+  /* "Kiss the rails": MagitekChassis already applies rail-boundary padding */
+  padding: 0 0 36px;
 }
 
 /* -----------------------------
@@ -150,18 +54,16 @@
 }
 
 @media (max-width: 520px) {
-  .hudTopBarImage {
-    left: 8px;
-    transform: scale(0.56);
+  .scrollRoot {
+    --rail-width: clamp(70px, 20vw, 112px);
   }
 
-  .hudAvatarBehind {
-    left: 14px;
+  .foregroundRoot {
+    --rail-width: clamp(70px, 20vw, 112px);
   }
 
-  .sideRail {
-    width: 38px;
-    opacity: 0.85;
+  .contentShell {
+    padding: 0 calc(14px + var(--rail-width)) 32px;
   }
 }
 

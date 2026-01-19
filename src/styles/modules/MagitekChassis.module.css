@@ -13,6 +13,19 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  /* Exposed to pages for precise rail docking */
+  --magitek-pedestal-h: 0px;
+  --magitek-hud-h: 0px;
+  /* =========================================
+     Responsive Chassis Geometry (V6)
+     ========================================= */
+  --rail-width: 12vw;
+  --hud-height: 12vh;
+  --pedestal-height: 12vh;
+
+  /* Internal aliases (keep existing selectors stable) */
+  --magitek-rail-width: var(--rail-width);
+  --magitek-scroll-pad-x: var(--rail-width);
 }
 
 /* ============================================
@@ -24,28 +37,97 @@
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 0;
+  z-index: 1000;
   pointer-events: none;
   /* Background decorative elements can be added here */
+}
+
+.masterBgImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 1;
+  pointer-events: none;
+  user-select: none;
 }
 
 /* ============================================
    ScrollContent Layer - Main scrollable content
    ============================================ */
 .scrollContentLayer {
-  position: relative;
-  z-index: 1;
+  /* Fixed Masked Wrapper (static lens) */
+  position: fixed;
+  inset: 0;
+  z-index: 2000; /* #layer-scroll-content */
   width: 100%;
-  min-height: 100vh;
-  overflow-y: auto;
+  height: 100vh;
+  overflow: hidden; /* scrolling happens in child container */
+  pointer-events: auto;
+
+  /* =========================================
+     Mandatory Void Masking (V6)
+     - Hide content under HUD/Pedestal plates even through transparency.
+     - Bound to --hud-height and --pedestal-height.
+     ========================================= */
+  /* Feathered holographic fade (matches 80/10/10 zones)
+     Defaults (when --hud-height/--pedestal-height are 12vh):
+     - 0–8vh: transparent
+     - 8–15vh: fade in
+     - 15–85vh: solid
+     - 85–92vh: fade out
+     - 92–100vh: transparent
+
+     The offsets (4vh / 3vh / 4vh) keep behavior stable if vars change.
+  */
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent calc(var(--hud-height) - 4vh),
+    rgba(0, 0, 0, 1) calc(var(--hud-height) + 3vh),
+    rgba(0, 0, 0, 1) calc(100vh - var(--pedestal-height) - 3vh),
+    transparent calc(100vh - var(--pedestal-height) + 4vh),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent calc(var(--hud-height) - 4vh),
+    rgba(0, 0, 0, 1) calc(var(--hud-height) + 3vh),
+    rgba(0, 0, 0, 1) calc(100vh - var(--pedestal-height) - 3vh),
+    transparent calc(100vh - var(--pedestal-height) + 4vh),
+    transparent 100%
+  );
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-mode: alpha;
+  mask-mode: alpha;
+}
+
+.scrollInnerView {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto; /* Scroll Target */
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
+  pointer-events: auto;
 }
 
 .scrollContent {
   width: 100%;
-  min-height: 100vh;
-  /* Content padding and layout can be customized per page */
+  min-height: 100%;
+  /* 80/10/10 push: keep content reachable in the visible zone */
+  padding-top: calc(var(--hud-height) + 2vh);
+  padding-bottom: calc(var(--pedestal-height) + 15vh);
+
+  /* “Kiss the rails” on any screen */
+  padding-left: var(--rail-width);
+  padding-right: var(--rail-width);
 }
 
 /* ============================================
@@ -57,7 +139,8 @@
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 1000;
+  /* Foreground navigation/HUD layer */
+  z-index: 3000; /* Fixed frame surface */
   pointer-events: none;
 }
 
@@ -98,11 +181,237 @@
 }
 
 /* ============================================
+   HUD Mask Layer (Top Layer: Frame + Pedestal)
+   ============================================ */
+.hudMaskLayer {
+  position: fixed;
+  inset: 0;
+  z-index: 3000; /* #layer-hud-mask */
+  pointer-events: none;
+}
+
+/* ============================================
+   V6 Crown (hud-top-bar.png) + Avatar window
+   Required z-index: HUD bar 3, Avatar 2
+   ============================================ */
+
+.crownRoot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: calc(var(--magitek-hud-h, 0px) + env(safe-area-inset-top));
+  pointer-events: none;
+  z-index: 60; /* above navShell, still within z-index:3 frame */
+}
+
+.crownBarImage {
+  position: absolute;
+  top: env(safe-area-inset-top);
+  left: 12px;
+  z-index: 3;
+  pointer-events: none;
+  transform-origin: left top;
+  user-select: none;
+}
+
+.crownAvatarBehind {
+  position: absolute;
+  z-index: 2;
+  pointer-events: auto; /* allow avatar upload click */
+  width: 92px;
+  height: 92px;
+  border-radius: 999px;
+  overflow: hidden;
+  clip-path: circle(46px at 46px 46px);
+}
+
+/* ============================================
+   V6 Navigation Shell (Side Rails + Icon Nodes)
+   - Lives inside #layer-hud-mask
+   - 9-slice rails: top cap + repeat-y mid + bottom cap
+   ============================================ */
+
+.navShell {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  --magitek-node-cyan: #00BFFF;
+}
+
+.navRail {
+  position: fixed;
+  top: calc(env(safe-area-inset-top) + var(--magitek-hud-h, 0px) + 4px);
+  bottom: calc(var(--magitek-pedestal-h, 0px) - 8px);
+  width: var(--magitek-rail-width);
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.navRailLeft {
+  left: 0;
+}
+
+.navRailRight {
+  right: 0;
+}
+
+.railCap {
+  width: 100%;
+  height: auto;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+}
+
+.railMid {
+  flex: 1;
+  width: 100%;
+  background-repeat: repeat-y;
+  background-position: center top;
+  background-size: 100% auto;
+}
+
+/* Mirror logic must not affect positioning */
+.navRailRight .railCap,
+.navRailRight .railMid {
+  transform: scaleX(-1);
+  transform-origin: center;
+}
+
+.navNodes {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.navNode {
+  position: fixed;
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 191, 255, 0.45);
+  background: rgba(0, 0, 0, 0.32);
+  color: var(--magitek-node-cyan);
+  font-size: 18px;
+  font-weight: 900;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  pointer-events: auto;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow:
+    0 0 14px rgba(0, 191, 255, 0.38),
+    0 0 28px rgba(0, 191, 255, 0.22);
+  text-shadow:
+    0 0 10px rgba(0, 191, 255, 0.75),
+    0 0 22px rgba(0, 191, 255, 0.42);
+  transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+}
+
+.navNode:hover {
+  transform: translateY(-1px);
+  background: rgba(0, 0, 0, 0.40);
+  border-color: rgba(0, 191, 255, 0.65);
+}
+
+.navNode:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Node placements (V6 baseline) */
+.nodeTime {
+  left: calc(8px + (var(--magitek-rail-width) / 2) - 23px);
+  top: calc(env(safe-area-inset-top) + var(--magitek-hud-h, 0px) + 72px);
+}
+
+.nodeSoul {
+  left: calc(8px + (var(--magitek-rail-width) / 2) - 23px);
+  top: calc(env(safe-area-inset-top) + var(--magitek-hud-h, 0px) + 170px);
+}
+
+.nodeTools {
+  right: calc(8px + (var(--magitek-rail-width) / 2) - 23px);
+  top: calc(env(safe-area-inset-top) + var(--magitek-hud-h, 0px) + 72px);
+}
+
+.nodeTuning {
+  right: calc(8px + (var(--magitek-rail-width) / 2) - 23px);
+  top: calc(env(safe-area-inset-top) + var(--magitek-hud-h, 0px) + 170px);
+}
+
+.nodeHonor {
+  right: calc(8px + (var(--magitek-rail-width) / 2) - 23px);
+  top: calc(env(safe-area-inset-top) + var(--magitek-hud-h, 0px) + 268px);
+}
+
+.pedestalWrapper {
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: min(1284px, 100vw);
+  height: auto;
+  z-index: 50;
+  pointer-events: auto; /* blocks click-through + enables slot overlays */
+}
+
+.pedestalImg {
+  width: 100%;
+  height: auto;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+}
+
+.pedestalSlots {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.pedestalSlot {
+  position: absolute;
+  pointer-events: auto;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  opacity: 0; /* placeholder - invisible hit zones */
+}
+
+/* Slot mapping (V6.1) - tuned for bottom_pedestal.png (1284x429) */
+.slotLeft {
+  left: 22.5%;
+  top: 20%;
+  width: 13.5%;
+  height: 48%;
+}
+
+.slotCenter {
+  left: 43.5%;
+  top: 14%;
+  width: 13%;
+  height: 58%;
+}
+
+.slotRight {
+  left: 64.5%;
+  top: 20%;
+  width: 13.5%;
+  height: 48%;
+}
+
+/* ============================================
    Responsive adjustments
    ============================================ */
 @media (max-width: 768px) {
-  .scrollContentLayer {
-    /* Mobile-specific scroll behavior */
+  /* Mobile-specific scroll behavior */
+  .scrollInnerView {
     -webkit-overflow-scrolling: touch;
   }
   

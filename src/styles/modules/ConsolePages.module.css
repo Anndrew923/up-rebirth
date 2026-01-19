@@ -1,0 +1,116 @@
+/**
+ * Console/Placeholder pages (V6 routing surfaces)
+ * Strict Style Isolation: CSS Modules only
+ */
+
+.page {
+  width: 100%;
+  min-height: 100vh;
+  padding: 18px 16px 22px;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.header {
+  width: min(980px, 100%);
+  margin: 0 auto 14px;
+  padding: 16px 16px 14px;
+  border-radius: 18px;
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.kicker {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.title {
+  margin: 6px 0 6px;
+  font-size: 26px;
+  font-weight: 900;
+}
+
+.subtitle {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.76);
+  line-height: 1.5;
+}
+
+.shell {
+  width: min(980px, 100%);
+  margin: 0 auto;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.card,
+.cardBtn {
+  border-radius: 18px;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.cardBtn {
+  text-align: left;
+  color: rgba(255, 255, 255, 0.92);
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.cardBtn:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(0, 0, 0, 0.28);
+}
+
+.cardTitle {
+  font-weight: 900;
+  margin-bottom: 6px;
+}
+
+.cardText {
+  color: rgba(255, 255, 255, 0.74);
+  line-height: 1.5;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.primaryBtn {
+  border: 1px solid rgba(0, 191, 255, 0.45);
+  background: rgba(0, 191, 255, 0.10);
+  color: #aeeaff;
+  font-weight: 900;
+  border-radius: 999px;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+.hint {
+  color: rgba(255, 255, 255, 0.70);
+  line-height: 1.55;
+  font-size: 13px;
+  padding: 10px 2px;
+}
+
+@media (max-width: 720px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+

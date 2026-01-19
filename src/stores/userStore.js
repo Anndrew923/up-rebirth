@@ -431,7 +431,6 @@ export const useUserStore = create((set, get) => ({
         for (const key of Object.keys(updates)) {
           if (SENSITIVE_PROFILE_FIELDS.has(key)) {
             // Ignore silently (do not throw) to avoid breaking callers.
-            // eslint-disable-next-line no-continue
             continue;
           }
         }

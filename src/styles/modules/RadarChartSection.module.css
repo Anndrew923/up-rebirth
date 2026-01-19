@@ -5,16 +5,19 @@
 
 .radarSection {
   padding: var(--spacing-xl);
-  background-color: white;
+  background-color: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(0, 191, 255, 0.15);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   border-radius: var(--border-radius-lg);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
   margin-bottom: var(--spacing-lg);
 }
 
 .title {
   font-size: var(--font-size-lg);
   font-weight: 600;
-  color: var(--color-primary);
+  color: rgba(255, 255, 255, 0.92);
   margin-bottom: var(--spacing-lg);
   text-align: center;
 }
@@ -46,14 +49,14 @@
 .completionStatus {
   margin-bottom: var(--spacing-lg);
   padding: var(--spacing-md);
-  background-color: rgba(0, 123, 255, 0.05);
+  background-color: rgba(0, 123, 255, 0.1);
   border-radius: var(--border-radius-md);
 }
 
 .completionText {
   font-size: var(--font-size-sm);
   font-weight: 600;
-  color: var(--color-primary);
+  color: rgba(255, 255, 255, 0.88);
   margin-bottom: var(--spacing-xs);
 }
 
@@ -84,9 +87,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f8f9fa;
+  background-color: rgba(255, 255, 255, 0.06);
   border-radius: var(--border-radius-md);
-  border: 2px dashed rgba(0, 0, 0, 0.1);
+  border: 2px dashed rgba(255, 255, 255, 0.14);
 }
 
 .chartGrid {
@@ -99,7 +102,7 @@
 
 .chartNote {
   text-align: center;
-  color: var(--color-secondary);
+  color: rgba(255, 255, 255, 0.72);
 }
 
 .chartNote p {
@@ -127,13 +130,13 @@
   min-width: 80px;
   font-size: var(--font-size-base);
   font-weight: 500;
-  color: var(--color-primary);
+  color: rgba(255, 255, 255, 0.88);
 }
 
 .metricBar {
   flex: 1;
   height: 24px;
-  background-color: #e9ecef;
+  background-color: rgba(255, 255, 255, 0.08);
   border-radius: var(--border-radius-sm);
   overflow: hidden;
   position: relative;
@@ -151,7 +154,7 @@
   text-align: right;
   font-size: var(--font-size-base);
   font-weight: 600;
-  color: var(--color-primary);
+  color: rgba(255, 255, 255, 0.88);
 }
 
 /* Responsive */

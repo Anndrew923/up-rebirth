@@ -1,0 +1,282 @@
+/**
+ * EvaluationHub (評測專頁)
+ * Strict Style Isolation: CSS Modules only
+ */
+
+.page {
+  width: 100%;
+  min-height: 100vh;
+  padding: 22px 18px 36px;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.header {
+  width: min(980px, 100%);
+  margin: 0 auto 18px;
+  padding: 18px 18px 16px;
+  border-radius: 18px;
+  background: rgba(0, 0, 0, 0.32);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.kicker {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.title {
+  margin: 6px 0 6px;
+  font-size: 28px;
+  font-weight: 900;
+}
+
+.subtitle {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.76);
+  line-height: 1.5;
+}
+
+.grid {
+  width: min(980px, 100%);
+  margin: 0 auto 18px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.card {
+  text-align: left;
+  border-radius: 18px;
+  padding: 16px 16px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(0, 0, 0, 0.28);
+  color: rgba(255, 255, 255, 0.92);
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.card:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(0, 0, 0, 0.34);
+}
+
+.card:active {
+  transform: translateY(0);
+}
+
+.cardTitle {
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.cardDesc {
+  margin-top: 8px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.74);
+  line-height: 1.45;
+}
+
+.group {
+  width: min(980px, 100%);
+  margin: 0 auto 14px;
+  padding: 14px 14px 12px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.groupTitle {
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.88);
+  margin-bottom: 10px;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.pill {
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.92);
+  padding: 10px 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.pill:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.note {
+  width: min(980px, 100%);
+  margin: 0 auto;
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.noteTitle {
+  font-weight: 900;
+  margin-bottom: 6px;
+}
+
+.noteText {
+  color: rgba(255, 255, 255, 0.76);
+  line-height: 1.55;
+}
+
+/* ==============================
+   Sub-sections (1RM / Plates)
+   ============================== */
+
+.sectionHeader {
+  width: min(980px, 100%);
+  margin: 0 auto 12px;
+}
+
+.backBtn {
+  border: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.78);
+  cursor: pointer;
+  padding: 8px 0 10px;
+  font-weight: 800;
+}
+
+.sectionTitle {
+  font-size: 22px;
+  font-weight: 900;
+  margin: 4px 0 6px;
+}
+
+.sectionSubtitle {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.panel {
+  width: min(980px, 100%);
+  margin: 0 auto;
+  padding: 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.label {
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.input,
+.select {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(0, 0, 0, 0.30);
+  color: rgba(255, 255, 255, 0.92);
+  padding: 10px 12px;
+  outline: none;
+}
+
+.input:focus,
+.select:focus {
+  border-color: rgba(0, 123, 255, 0.55);
+}
+
+.resultBox {
+  margin-top: 10px;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.resultLabel {
+  color: rgba(255, 255, 255, 0.72);
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.resultValue {
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.resultHint {
+  margin-top: 8px;
+  color: rgba(255, 255, 255, 0.70);
+  line-height: 1.5;
+  font-size: 13px;
+}
+
+.plateList {
+  margin-top: 10px;
+  display: grid;
+  gap: 8px;
+}
+
+.plateRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.20);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.plateName {
+  font-weight: 900;
+}
+
+.plateCount {
+  color: rgba(255, 255, 255, 0.82);
+  font-weight: 800;
+}
+
+.warning {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 193, 7, 0.28);
+  background: rgba(255, 193, 7, 0.10);
+  color: rgba(255, 255, 255, 0.90);
+  line-height: 1.45;
+}
+
+@media (max-width: 720px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+}
+

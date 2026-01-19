@@ -5,20 +5,23 @@
 
 .formSection {
   padding: var(--spacing-xl);
-  background-color: white;
+  background-color: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(0, 191, 255, 0.15);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   border-radius: var(--border-radius-lg);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
   margin-bottom: var(--spacing-lg);
 }
 
 .reminder {
   padding: var(--spacing-md);
-  background-color: rgba(255, 193, 7, 0.1);
+  background-color: rgba(255, 193, 7, 0.12);
   border-left: 3px solid var(--color-warning);
   border-radius: var(--border-radius-md);
   margin-bottom: var(--spacing-lg);
   font-size: var(--font-size-sm);
-  color: var(--color-warning);
+  color: rgba(255, 217, 102, 0.95);
 }
 
 .nicknameGroup {
@@ -58,7 +61,7 @@
 .title {
   font-size: var(--font-size-lg);
   font-weight: 600;
-  color: var(--color-primary);
+  color: rgba(255, 255, 255, 0.92);
   margin-bottom: var(--spacing-lg);
 }
 
@@ -83,7 +86,7 @@
 .label {
   font-size: var(--font-size-base);
   font-weight: 500;
-  color: var(--color-primary);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .input,
