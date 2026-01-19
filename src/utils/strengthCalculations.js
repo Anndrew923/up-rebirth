@@ -131,9 +131,29 @@ export const calculateWeightForReps = (oneRM, targetReps, method = 'average') =>
     return oneRM;
   }
   
-  // Reverse calculation - approximate by solving the formula
-  // This is an approximation since formulas aren't perfectly invertible
-  const estimatedWeight = oneRM / (1 + targetReps / 30); // Using Epley reverse
-  
+  const reps = Math.max(1, parseFloat(targetReps));
+
+  // Reverse calculation: invert common 1RM formulas
+  const epley = oneRM / (1 + reps / 30);
+  const brzycki = oneRM * ((37 - reps) / 36);
+  const lombardi = oneRM / Math.pow(reps, 0.1);
+
+  let estimatedWeight;
+  switch (method) {
+    case 'epley':
+      estimatedWeight = epley;
+      break;
+    case 'brzycki':
+      estimatedWeight = brzycki;
+      break;
+    case 'lombardi':
+      estimatedWeight = lombardi;
+      break;
+    case 'average':
+    default:
+      estimatedWeight = (epley + brzycki + lombardi) / 3;
+      break;
+  }
+
   return Math.max(0, estimatedWeight);
 };

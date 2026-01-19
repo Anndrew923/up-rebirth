@@ -11,6 +11,32 @@
   gap: var(--spacing-md);
 }
 
+.hudVariant {
+  padding: 0;
+  gap: 0;
+}
+
+.hudVariant .avatarContainer {
+  width: 92px;
+  height: 92px;
+}
+
+.hudVariant .avatar {
+  border-width: 0;
+  box-shadow: none;
+}
+
+.hudVariant .avatarPlaceholder {
+  border-width: 0;
+  box-shadow: none;
+  font-size: 2.2rem;
+}
+
+.hudVariant .uploadHint {
+  opacity: 1;
+  transform: scale(0.9);
+}
+
 .avatarContainer {
   position: relative;
   width: 120px;

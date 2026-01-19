@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { useUserStore } from '../../stores/userStore';
 import { useUIStore } from '../../stores/uiStore';
 import { calculateStrengthScore } from '../../utils/strengthScoring';
@@ -31,11 +31,18 @@ export function useStrengthLogic() {
 
   // Get user data from store
   const userData = useMemo(() => {
+    const emailVerified = userProfile?.emailVerified;
+    // Verification policy:
+    // - If explicitly false -> civilian mode (cap)
+    // - If true/unknown (token shaky / field missing) -> do NOT downgrade by default
+    const isVerified =
+      userProfile?.isAnonymous === true ? false : emailVerified === false ? false : true;
+
     return {
       gender: stats?.gender || userProfile?.gender || null,
       age: stats?.age || null,
-      weight: stats?.bodyweight || stats?.weight || null,
-      isVerified: userProfile?.emailVerified || false,
+      bodyWeight: stats?.bodyWeight ?? stats?.bodyweight ?? stats?.weight ?? null,
+      isVerified,
       testInputs: stats?.testInputs || {},
       scores: stats?.scores || {},
     };
@@ -71,7 +78,6 @@ export function useStrengthLogic() {
   const [unlockModalData, setUnlockModalData] = useState(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [expandedExercises, setExpandedExercises] = useState(new Set());
-  const timeoutRef = useRef(null);
 
   // Calculate max strength
   const calculateMaxStrength = useCallback(
@@ -83,7 +89,7 @@ export function useStrengthLogic() {
 
       const weightNum = parseFloat(weight);
       const repsNum = parseFloat(reps);
-      const userWeight = parseFloat(userData.weight);
+      const userWeight = parseFloat(userData.bodyWeight);
       const userAge = parseFloat(age);
 
       if (!userWeight || !userAge) {
@@ -130,12 +136,12 @@ export function useStrengthLogic() {
         isCapped: isCapped,
       }));
     },
-    [userData.weight, userData.isVerified, age, gender]
+    [userData.bodyWeight, userData.isVerified, age, gender]
   );
 
   // Auto-calculate existing data
   useEffect(() => {
-    if (gender && userData.weight && age) {
+    if (gender && userData.bodyWeight && age) {
       const exercisesToCalculate = [
         { key: 'benchPress', state: benchPress, setState: setBenchPress },
         { key: 'squat', state: squat, setState: setSquat },
@@ -152,7 +158,7 @@ export function useStrengthLogic() {
     }
   }, [
     gender,
-    userData.weight,
+    userData.bodyWeight,
     age,
     benchPress,
     squat,
@@ -274,7 +280,7 @@ export function useStrengthLogic() {
             rawScore: shoulderPress.rawScore,
             isCapped: shoulderPress.isCapped,
           },
-          bodyWeight: parseFloat(userData.weight),
+          bodyWeight: parseFloat(userData.bodyWeight),
         },
       };
 

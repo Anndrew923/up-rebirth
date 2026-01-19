@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useRouteCleanup } from '../../hooks/useRouteCleanup';
 import { MagitekChassis } from '../layout/MagitekChassis';
+import { useUserStore } from '../../stores/userStore';
 import { useStrengthLogic } from './useStrengthLogic';
 import StrengthExerciseCard from './StrengthExerciseCard';
 import StrengthRadarChart from './StrengthRadarChart';
@@ -21,6 +22,10 @@ import styles from '../../styles/modules/StrengthPage.module.css';
  * - Uses CSS Modules
  */
 function StrengthPage() {
+  const userProfile = useUserStore((state) => state.userProfile);
+  const currentUserLabel =
+    userProfile?.displayName || userProfile?.email || '冒險者';
+
   const {
     currentTab,
     setCurrentTab,
@@ -65,6 +70,7 @@ function StrengthPage() {
       <div className={styles.strengthContainer}>
         <div className={styles.strengthHeader}>
           <h1 className={styles.strengthTitle}>💪 力量測試</h1>
+          <p className={styles.userGreeting}>歡迎回來，{currentUserLabel}</p>
           <p className={styles.strengthSafetyNote}>
             請在安全環境下進行測試，如有不適請立即停止
           </p>

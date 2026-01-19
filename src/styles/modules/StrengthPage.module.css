@@ -22,6 +22,13 @@
   margin-bottom: var(--spacing-sm);
 }
 
+.userGreeting {
+  font-size: var(--font-size-sm);
+  color: var(--color-secondary);
+  margin-top: 0;
+  margin-bottom: var(--spacing-sm);
+}
+
 .strengthSafetyNote {
   font-size: var(--font-size-sm);
   color: var(--color-secondary);

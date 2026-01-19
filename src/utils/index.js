@@ -16,6 +16,32 @@ export {
 // Strength scoring
 export { calculateStrengthScore } from './strengthScoring';
 
+// Assessment scoring (Cardio / Muscle / FFMI / Power)
+export {
+  normalizeGender,
+  clamp,
+  capScoreForSubmission,
+  getLevelFromScore,
+  // Cardio
+  getCardioAgeRange,
+  calculateCooperScore,
+  calculate5KmScore,
+  // Muscle
+  getMuscleAgeRange,
+  calculateScoreFromStandard,
+  calculateMuscleScores,
+  // FFMI
+  calculateFFMI,
+  calculateFFMIScore,
+  getFFMICategory,
+  // Power
+  getPowerAgeRange,
+  getPowerStandards,
+  calculateScoreIncreasing,
+  calculateScoreDecreasing,
+  calculatePowerScores,
+} from './assessmentScoring';
+
 // DOTS calculator
 export {
   calculateDOTS,

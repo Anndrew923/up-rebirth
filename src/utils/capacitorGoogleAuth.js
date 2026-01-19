@@ -8,13 +8,24 @@ import { auth } from '../firebase';
  * Handles native Google Sign-In for mobile platforms
  * Falls back to web popup on non-native platforms
  */
-export const initializeCapacitorGoogleAuth = () => {
-  // Initialize Google Auth plugin
+export const initializeCapacitorGoogleAuth = async () => {
+  const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+  // If clientId isn't configured, don't attempt any Google init (avoids 400 noise).
+  if (!clientId) return { success: false, skipped: true, reason: 'missing-client-id' };
+
+  // Only initialize on native platforms; web uses Firebase popup flow.
+  const { Capacitor } = await import('@capacitor/core');
+  if (!Capacitor.isNativePlatform()) {
+    return { success: false, skipped: true, reason: 'not-native' };
+  }
+
   GoogleAuth.initialize({
-    clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+    clientId,
     scopes: ['profile', 'email'],
     grantOfflineAccess: true,
   });
+
+  return { success: true };
 };
 
 /**

@@ -7,31 +7,51 @@
  */
 
 /**
- * Calculate DOTS coefficient based on bodyweight
- * 
- * @param {number} bodyweight - Bodyweight in kg
- * @returns {number} DOTS coefficient
+ * IPF DOTS coefficients (source-of-truth):
+ * - src/constants/assessmentStandards.js
  */
-const getDOTSCoefficient = (bodyweight) => {
-  // DOTS formula coefficients
-  const a = -0.000001093;
-  const b = 0.0007391293;
-  const c = -0.1918759221;
-  const d = 24.0900756;
-  const e = -307.75076;
-  
-  // Clamp bodyweight to reasonable range (40kg - 200kg)
-  const bw = Math.max(40, Math.min(200, bodyweight));
-  
-  // Calculate coefficient using polynomial formula
-  const coefficient = 
-    a * Math.pow(bw, 4) +
-    b * Math.pow(bw, 3) +
-    c * Math.pow(bw, 2) +
-    d * bw +
-    e;
-  
-  return Math.max(0, coefficient);
+import { DOTS_COEFFICIENTS } from '../constants/assessmentStandards.js';
+
+const normalizeGender = (gender) => {
+  const g = `${gender || 'male'}`.toLowerCase();
+  return g === 'female' || gender === '女性' ? 'female' : 'male';
+};
+
+/**
+ * Strict IPF DOTS score for a single lift (or total).
+ *
+ * Formula:
+ * DOTS = (liftedWeight * 500) / (A*bw^4 + B*bw^3 + C*bw^2 + D*bw + E)
+ *
+ * @param {number} bodyWeight - Bodyweight in kg
+ * @param {number} liftedWeight - Lifted weight (kg) or total (kg)
+ * @param {'male'|'female'|string} gender
+ * @returns {number}
+ */
+export const calculateDOTS_IPF = (bodyWeight, liftedWeight, gender = 'male') => {
+  const bw = parseFloat(bodyWeight);
+  const lw = parseFloat(liftedWeight);
+
+  if (!bw || bw <= 0 || !Number.isFinite(bw) || Number.isNaN(bw)) return 0;
+  if (!lw || lw <= 0 || !Number.isFinite(lw) || Number.isNaN(lw)) return 0;
+
+  const g = normalizeGender(gender);
+  const coeff = DOTS_COEFFICIENTS[g];
+  if (!coeff) return 0;
+
+  const denominator =
+    coeff.A * Math.pow(bw, 4) +
+    coeff.B * Math.pow(bw, 3) +
+    coeff.C * Math.pow(bw, 2) +
+    coeff.D * bw +
+    coeff.E;
+
+  if (!Number.isFinite(denominator) || Number.isNaN(denominator)) return 0;
+  if (Math.abs(denominator) < 0.0001) return 0;
+
+  const dots = (lw * 500) / denominator;
+  if (!Number.isFinite(dots) || Number.isNaN(dots)) return 0;
+  return dots;
 };
 
 /**
@@ -39,15 +59,11 @@ const getDOTSCoefficient = (bodyweight) => {
  * 
  * @param {number} total - Total weight lifted (sum of squat, bench, deadlift) in kg
  * @param {number} bodyweight - Bodyweight in kg
+ * @param {'male'|'female'|string} gender - Optional, default male (legacy behavior)
  * @returns {number} DOTS score
  */
-export const calculateDOTS = (total, bodyweight) => {
-  if (total <= 0 || bodyweight <= 0) {
-    return 0;
-  }
-  
-  const coefficient = getDOTSCoefficient(bodyweight);
-  return total * coefficient;
+export const calculateDOTS = (total, bodyweight, gender = 'male') => {
+  return calculateDOTS_IPF(bodyweight, total, gender);
 };
 
 /**
@@ -70,7 +86,7 @@ export const calculateDOTSForLift = (liftWeight, bodyweight) => {
  * @param {number} bodyweight - Bodyweight in kg
  * @returns {number} Total DOTS score
  */
-export const calculateTotalDOTS = (squat, bench, deadlift, bodyweight) => {
+export const calculateTotalDOTS = (squat, bench, deadlift, bodyweight, gender = 'male') => {
   const total = squat + bench + deadlift;
-  return calculateDOTS(total, bodyweight);
+  return calculateDOTS(total, bodyweight, gender);
 };

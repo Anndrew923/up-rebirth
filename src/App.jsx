@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useUserStore } from './stores/userStore';
 import { useAutoRouteCleanup } from './hooks/useRouteCleanup';
 import { MagitekChassis } from './components/layout/MagitekChassis';
+import AppRoutes from './AppRoutes';
 import { Login } from './components/auth/Login';
 import { Signup } from './components/auth/Signup';
 import { initializeCapacitorGoogleAuth } from './utils/capacitorGoogleAuth';
@@ -19,11 +20,14 @@ function App() {
     const unsubscribe = initializeAuth();
     
     // Initialize Capacitor Google Auth
-    try {
-      initializeCapacitorGoogleAuth();
-    } catch (error) {
-      console.warn('Capacitor Google Auth initialization failed:', error);
-    }
+    (async () => {
+      try {
+        await initializeCapacitorGoogleAuth();
+      } catch (error) {
+        // Keep this quiet in production; noisy init failures can look like auth breakage.
+        console.warn('Capacitor Google Auth initialization failed:', error);
+      }
+    })();
     
     // Cleanup on unmount
     return () => {
@@ -73,18 +77,7 @@ function App() {
   }
 
   // Show main app when authenticated
-  return (
-    <MagitekChassis>
-      <div className={styles.app}>
-        <h1>Up Rebirth</h1>
-        <div className={styles.card}>
-          <p>歡迎回來, {userProfile?.displayName || userProfile?.email}!</p>
-          <p>Magitek Resonance 2.0 Chassis Active</p>
-          <p>認證系統已初始化</p>
-        </div>
-      </div>
-    </MagitekChassis>
-  );
+  return <AppRoutes />;
 }
 
 export default App;

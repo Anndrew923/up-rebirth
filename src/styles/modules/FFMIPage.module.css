@@ -1,0 +1,40 @@
+/**
+ * FFMI Page Styles (CSS Modules)
+ */
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+}
+
+.table th,
+.table td {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  padding: var(--spacing-sm);
+  text-align: left;
+  color: var(--color-secondary);
+}
+
+.table th {
+  color: var(--color-primary);
+  font-weight: 800;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: 9999px;
+  background: rgba(0, 123, 255, 0.08);
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.note {
+  font-size: var(--font-size-sm);
+  color: var(--color-secondary);
+  line-height: 1.5;
+}
+

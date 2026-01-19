@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useUserStore } from '../../stores/userStore';
 import { useUIStore } from '../../stores/uiStore';
-import { validateFitnessData, sanitizeInput } from '../../utils/validation';
+import { sanitizeInput } from '../../utils/validation';
 import styles from '../../styles/modules/UserFormSection.module.css';
 
 /**
@@ -37,7 +37,7 @@ export const UserFormSection = () => {
     if (userProfile || stats) {
       setFormData({
         nickname: userProfile?.nickname || userProfile?.displayName || '',
-        weight: stats?.weight || stats?.bodyweight || '',
+        weight: stats?.bodyWeight ?? stats?.weight ?? stats?.bodyweight ?? '',
         height: stats?.height || '',
         age: stats?.age || '',
         gender: stats?.gender || 'male',
@@ -162,9 +162,8 @@ export const UserFormSection = () => {
       const updates = {};
 
       if (formData.weight) {
-        updates.weight = parseFloat(formData.weight);
-        updates.bodyweight = updates.weight; // Support both field names
-        updates.lastWeightUpdate = new Date().toISOString();
+        // Canonical contract: bodyWeight
+        updates.bodyWeight = parseFloat(formData.weight);
       }
 
       if (formData.height) {

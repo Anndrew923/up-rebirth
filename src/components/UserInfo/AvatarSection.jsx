@@ -14,7 +14,7 @@ import styles from '../../styles/modules/AvatarSection.module.css';
  * 
  * Ported from legacy UserInfo AvatarSection with Firebase Storage integration
  */
-export const AvatarSection = ({ isGuest = false }) => {
+export const AvatarSection = ({ isGuest = false, variant = 'full', className = '' }) => {
   const userProfile = useUserStore((state) => state.userProfile);
   const updateUserStats = useUserStore((state) => state.updateUserStats);
   const setLoadingMessage = useUIStore((state) => state.setLoadingMessage);
@@ -175,8 +175,13 @@ export const AvatarSection = ({ isGuest = false }) => {
   
   const avatarUrl = isGuest ? '/guest-avatar.svg' : (userProfile?.photoURL || userProfile?.avatarUrl);
 
+  const rootClassName =
+    variant === 'hud'
+      ? `${styles.avatarSection} ${styles.hudVariant} ${className}`.trim()
+      : `${styles.avatarSection} ${className}`.trim();
+
   return (
-    <div className={styles.avatarSection}>
+    <div className={rootClassName}>
       <input
         ref={fileInputRef}
         type="file"
@@ -218,18 +223,21 @@ export const AvatarSection = ({ isGuest = false }) => {
         )}
       </div>
       
-      {avatarError && (
+      {variant !== 'hud' && avatarError && (
         <div className={styles.errorMessage} role="alert">
           {avatarError}
         </div>
       )}
       
-      <h2 className={styles.userName}>{displayName}</h2>
-      
-      {userProfile?.emailVerified && (
-        <span className={styles.verifiedBadge} title="榮譽認證">
-          🏅 已認證
-        </span>
+      {variant !== 'hud' && (
+        <>
+          <h2 className={styles.userName}>{displayName}</h2>
+          {userProfile?.emailVerified && (
+            <span className={styles.verifiedBadge} title="榮譽認證">
+              🏅 已認證
+            </span>
+          )}
+        </>
       )}
     </div>
   );

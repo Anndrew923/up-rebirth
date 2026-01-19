@@ -1,10 +1,4 @@
-import { useRouteCleanup } from '../../hooks/useRouteCleanup';
-import { useUserStore } from '../../stores/userStore';
-import { AvatarSection } from './AvatarSection';
-import { RadarChartSection } from './RadarChartSection';
-import { UserFormSection } from './UserFormSection';
-import { SettingsModals } from './SettingsModals';
-import styles from '../../styles/modules/UserInfo.module.css';
+import UserInfoPage from './UserInfoPage';
 
 /**
  * Main UserInfo Component
@@ -20,51 +14,9 @@ import styles from '../../styles/modules/UserInfo.module.css';
  * - SettingsModals: Privacy and notification settings
  */
 export const UserInfo = () => {
-  const userProfile = useUserStore((state) => state.userProfile);
-  const isAuthenticated = useUserStore((state) => state.isAuthenticated);
-  const isLoading = useUserStore((state) => state.isLoading);
-
-  // Navigation defense - clear all modals/overlays on route change
-  useRouteCleanup('userinfo');
-
-  // Show loading state
-  if (isLoading) {
-    return (
-      <div className={styles.userInfo}>
-        <div className={styles.loading}>
-          <div className={styles.spinner}></div>
-          <p>載入中...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Show message if not authenticated
-  if (!isAuthenticated || !userProfile) {
-    return (
-      <div className={styles.userInfo}>
-        <div className={styles.notAuthenticated}>
-          <p>請先登入以查看個人資料</p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className={styles.userInfo}>
-      {/* Avatar Section */}
-      <AvatarSection isGuest={false} />
-
-      {/* Radar Chart Section */}
-      <RadarChartSection loading={isLoading} />
-
-      {/* User Form Section */}
-      <UserFormSection />
-
-      {/* Settings Modals */}
-      <SettingsModals />
-    </div>
-  );
+  // Keep the legacy export path stable for AppRoutes.
+  // The new implementation lives in `UserInfoPage.jsx`.
+  return <UserInfoPage />;
 };
 
 export default UserInfo;

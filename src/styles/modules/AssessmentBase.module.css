@@ -1,0 +1,235 @@
+/**
+ * Assessment Base Styles (Magitek 2.0)
+ * Shared UI primitives for P1 Assessment Suite pages.
+ */
+
+.page {
+  width: 100%;
+  min-height: 100vh;
+  padding: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.title {
+  font-size: var(--font-size-xl);
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-secondary);
+}
+
+.card {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  padding: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.metaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  justify-content: center;
+  color: var(--color-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-secondary);
+}
+
+.input {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-base);
+  transition: border-color 0.2s ease;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.inlineInputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md);
+}
+
+.tabs {
+  display: flex;
+  gap: var(--spacing-sm);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.tabBtn {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: 9999px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  background: rgba(0, 0, 0, 0.02);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 600;
+  color: var(--color-secondary);
+}
+
+.tabBtn:hover {
+  border-color: rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+}
+
+.tabBtnActive {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: rgba(0, 123, 255, 0.08);
+}
+
+.primaryBtn {
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-md);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.primaryBtn:hover:not(:disabled) {
+  background: #0056b3;
+  transform: translateY(-2px);
+}
+
+.primaryBtn:disabled {
+  background: var(--color-secondary);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.secondaryBtn {
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--color-secondary);
+  border: 2px solid rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius-md);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.resultCard {
+  background: rgba(0, 123, 255, 0.06);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  align-items: center;
+  text-align: center;
+}
+
+.scoreLine {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.verifiedBadge {
+  margin-left: var(--spacing-xs);
+  color: var(--color-success);
+  font-weight: 700;
+}
+
+.warning {
+  color: var(--color-warning);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.unlockBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: 9999px;
+  background: rgba(0, 0, 0, 0.65);
+  border: 1px solid rgba(255, 193, 7, 0.55);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.unlockBtn:hover {
+  background: rgba(0, 0, 0, 0.8);
+  border-color: rgba(255, 193, 7, 0.85);
+}
+
+.unlockText {
+  color: var(--color-warning);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+}
+
+.sectionTitle {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.collapsibleHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.arrow {
+  color: var(--color-secondary);
+  font-size: var(--font-size-sm);
+  user-select: none;
+}
+
+.divider {
+  height: 1px;
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.submitSection {
+  display: flex;
+  justify-content: center;
+}
+
+@media (max-width: 520px) {
+  .page {
+    padding: var(--spacing-md);
+  }
+
+  .inlineInputs {
+    grid-template-columns: 1fr;
+  }
+}
+

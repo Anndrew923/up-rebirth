@@ -12,9 +12,11 @@ import styles from '../../styles/modules/MagitekChassis.module.css';
  * 2. ScrollContent Layer - Main scrollable business logic content
  * 3. Foreground Layer - Fixed UI elements, modals, overlays
  * 
+ * @param {React.ReactNode} background - Optional content for Background layer
  * @param {React.ReactNode} children - Content to render in ScrollContent layer
+ * @param {React.ReactNode} foreground - Optional content for Foreground layer (HUD, exoskeleton, etc.)
  */
-export const MagitekChassis = ({ children }) => {
+export const MagitekChassis = ({ background = null, children, foreground = null }) => {
   const isOverlayVisible = useUIStore((state) => state.isOverlayVisible);
   const activeModals = useUIStore((state) => state.activeModals);
 
@@ -22,7 +24,7 @@ export const MagitekChassis = ({ children }) => {
     <div className={styles.chassis}>
       {/* Background Layer - Ambient effects, decorative elements */}
       <div className={styles.backgroundLayer}>
-        {/* Background content can be added here */}
+        {background}
       </div>
 
       {/* ScrollContent Layer - Main scrollable business logic */}
@@ -35,8 +37,10 @@ export const MagitekChassis = ({ children }) => {
       {/* Foreground Layer - Fixed UI, modals, overlays */}
       <div 
         className={`${styles.foregroundLayer} ${isOverlayVisible ? styles.overlayActive : ''}`}
-        aria-hidden={!isOverlayVisible}
       >
+        {/* Page HUD / exoskeleton slot (always mounted, should manage pointer-events itself) */}
+        {foreground}
+
         {/* Overlay backdrop */}
         {isOverlayVisible && (
           <div 

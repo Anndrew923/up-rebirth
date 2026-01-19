@@ -1,0 +1,167 @@
+/**
+ * UserInfoPage (Slice B) - Magitek HUD Implantation
+ * Strict Style Isolation: CSS Modules only
+ */
+
+.scrollRoot {
+  width: 100%;
+  min-height: 100vh;
+  padding-bottom: 96px; /* keep above TempNav dock */
+}
+
+.hudSpacer {
+  height: calc(92px + env(safe-area-inset-top));
+}
+
+.contentShell {
+  width: min(980px, 100%);
+  margin: 0 auto;
+  padding: 0 18px 36px;
+}
+
+/* -----------------------------
+   Foreground Layer (HUD)
+------------------------------ */
+.foregroundRoot {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.hudTop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: calc(92px + env(safe-area-inset-top));
+  pointer-events: none;
+}
+
+.hudTopBarImage {
+  position: absolute;
+  top: env(safe-area-inset-top);
+  left: 12px;
+  width: 598px;
+  height: 191px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: left top;
+  z-index: 3;
+  pointer-events: none;
+  transform-origin: left top;
+  transform: scale(0.62);
+}
+
+/* Avatar positioned BEHIND the HUD image (through the transparent window) */
+.hudAvatarBehind {
+  position: absolute;
+  top: calc(env(safe-area-inset-top) + 14px);
+  left: 18px;
+  z-index: 2;
+  pointer-events: auto; /* allow avatar upload click */
+}
+
+/* Buttons over the HUD */
+.hudButtons {
+  position: absolute;
+  top: calc(env(safe-area-inset-top) + 16px);
+  right: 14px;
+  display: flex;
+  gap: 10px;
+  z-index: 4;
+  pointer-events: auto;
+}
+
+.hudButton {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.35);
+  color: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  cursor: pointer;
+}
+
+.hudButton:active {
+  transform: scale(0.98);
+}
+
+/* Side rails */
+.sideRail {
+  position: fixed;
+  top: calc(92px + env(safe-area-inset-top));
+  bottom: 86px; /* above TempNav dock */
+  width: 44px;
+  background-size: contain;
+  background-repeat: repeat-y;
+  background-position: center top;
+  opacity: 0.92;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.sideRailRight {
+  right: 0;
+}
+
+.sideRailLeft {
+  left: 0;
+  transform: scaleX(-1);
+}
+
+/* -----------------------------
+   Page states
+------------------------------ */
+.pageState {
+  min-height: 60vh;
+  display: grid;
+  place-items: center;
+}
+
+.loadingCard {
+  width: min(520px, 92vw);
+  padding: 20px 18px;
+  border-radius: 16px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.92);
+  text-align: center;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.spinner {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-top-color: rgba(255, 255, 255, 0.85);
+  margin: 0 auto 12px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 520px) {
+  .hudTopBarImage {
+    left: 8px;
+    transform: scale(0.56);
+  }
+
+  .hudAvatarBehind {
+    left: 14px;
+  }
+
+  .sideRail {
+    width: 38px;
+    opacity: 0.85;
+  }
+}
+

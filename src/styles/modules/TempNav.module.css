@@ -1,0 +1,65 @@
+/**
+ * Temporary Navigation Dock (Phase 4.x)
+ * Fixed-bottom, non-invasive, CSS Modules only.
+ */
+
+.dock {
+  position: fixed;
+  left: var(--spacing-md);
+  right: var(--spacing-md);
+  bottom: var(--spacing-md);
+  z-index: 3000;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.dockInner {
+  pointer-events: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.navBtn {
+  border: 2px solid rgba(0, 0, 0, 0.08);
+  background: rgba(0, 0, 0, 0.02);
+  color: var(--color-secondary);
+  border-radius: 9999px;
+  padding: var(--spacing-xs) var(--spacing-md);
+  font-size: var(--font-size-sm);
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.navBtn:hover {
+  transform: translateY(-1px);
+  border-color: rgba(0, 0, 0, 0.16);
+}
+
+.navBtnActive {
+  background: rgba(0, 123, 255, 0.12);
+  border-color: rgba(0, 123, 255, 0.35);
+  color: var(--color-primary);
+}
+
+@media (max-width: 520px) {
+  .dock {
+    left: var(--spacing-sm);
+    right: var(--spacing-sm);
+    bottom: var(--spacing-sm);
+  }
+
+  .dockInner {
+    border-radius: var(--border-radius-lg);
+  }
+}
+

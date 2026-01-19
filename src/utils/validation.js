@@ -78,6 +78,7 @@ export const validateFitnessData = (data) => {
  * Security: Detect potential cheating attempts
  */
 const isSuspiciousPattern = (value, type) => {
+  void type;
   // Check for too many perfect round numbers
   if (value % 10 === 0 && value > 100) {
     // Multiple perfect 10s might indicate manual entry rather than actual measurement
