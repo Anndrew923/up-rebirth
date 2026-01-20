@@ -1,6 +1,12 @@
 {
   "profile": {
     "form": {
+      "nicknamePlaceholder": "您的暱稱",
+      "generateNickname": "隨機生成暱稱",
+      "numberPlaceholder": "0.0",
+      "numberPlaceholderInt": "0",
+      "bioPlaceholder": "介紹一下自己...",
+      "changePhoto": "更換大頭照",
       "region": "地區",
       "profession": "職業",
       "regionPlaceholder": "例如：台北市 / 台中市",

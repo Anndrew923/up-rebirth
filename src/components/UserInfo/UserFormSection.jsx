@@ -397,14 +397,14 @@ export const UserFormSection = () => {
               value={formData.nickname}
               onChange={(e) => handleNicknameChange(e.target.value)}
               className={`${styles.input} ${errors.nickname ? styles.inputError : ''}`}
-              placeholder="您的暱稱"
+              placeholder={t('profile.form.nicknamePlaceholder', '您的暱稱')}
               maxLength={20}
             />
             <button
               type="button"
               onClick={handleGenerateNickname}
               className={styles.generateButton}
-              title="隨機生成暱稱"
+              title={t('profile.form.generateNickname', '隨機生成暱稱')}
             >
               🎲
             </button>
@@ -426,7 +426,7 @@ export const UserFormSection = () => {
               value={formData.weight}
               onChange={(e) => handleInputChange('weight', e.target.value)}
               className={`${styles.input} ${errors.weight ? styles.inputError : ''}`}
-              placeholder="0.0"
+              placeholder={t('profile.form.numberPlaceholder', '0.0')}
               step="0.1"
               min="0.1"
               max="1000"
@@ -447,7 +447,7 @@ export const UserFormSection = () => {
               value={formData.height}
               onChange={(e) => handleInputChange('height', e.target.value)}
               className={`${styles.input} ${errors.height ? styles.inputError : ''}`}
-              placeholder="0"
+              placeholder={t('profile.form.numberPlaceholderInt', '0')}
               step="1"
               min="50"
               max="300"
@@ -471,7 +471,7 @@ export const UserFormSection = () => {
               value={formData.age}
               onChange={(e) => handleInputChange('age', e.target.value)}
               className={`${styles.input} ${errors.age ? styles.inputError : ''}`}
-              placeholder="0"
+              placeholder={t('profile.form.numberPlaceholderInt', '0')}
               step="1"
               min="1"
               max="150"
@@ -563,7 +563,7 @@ export const UserFormSection = () => {
             value={formData.bio}
             onChange={(e) => handleInputChange('bio', e.target.value)}
             className={`${styles.textarea} ${errors.bio ? styles.inputError : ''}`}
-            placeholder="介紹一下自己..."
+            placeholder={t('profile.form.bioPlaceholder', '介紹一下自己...')}
             rows={4}
             maxLength={500}
           />

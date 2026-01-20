@@ -13,6 +13,9 @@
   --magitek-border-glow: rgba(0, 191, 255, 0.3);
   --magitek-focus-glow: rgba(0, 191, 255, 0.7);
   --magitek-blur: 10px;
+
+  /* HUD intrinsic geometry SSOT (Avatar hole diameter / HUD width) */
+  --hud-hole-ratio: 17.3%;
 }
 
 .chassis {
@@ -22,19 +25,42 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  /* Box-model standardization: never let padding inflate width */
+  box-sizing: border-box;
   /* Exposed to pages for precise rail docking */
-  --magitek-pedestal-h: 0px;
-  --magitek-hud-h: 0px;
+  /* JS-free geometry: derive HUD/pedestal heights from intrinsic asset ratios */
+  /* SSOT: HUD width drives its intrinsic height */
+  --hud-width: clamp(320px, calc(100vw - 24px), 1100px);
+  /* Retire `aspect-ratio` for cross-device stability: use a physical spacer ratio. */
+  --hud-frame-ratio: 0.31228; /* 534 / 1710 */
+  --hud-frame-ratio-pct: 31.228%; /* (534 / 1710) * 100% */
+  --hud-height: calc(var(--hud-width) * var(--hud-frame-ratio));
+
+  /* SSOT: Pedestal width drives its intrinsic height */
+  --pedestal-width: min(1284px, 100vw);
+  --pedestal-height: calc(var(--pedestal-width) * 0.3341); /* fallback: 429/1284 ≈ 0.3341 */
+  --pedestal-height: calc(var(--pedestal-width) * (429 / 1284));
+
+  /* Backwards-compatible aliases */
+  --magitek-hud-w: var(--hud-width);
+  --magitek-hud-h: var(--hud-height);
+  --magitek-pedestal-w: var(--pedestal-width);
+  --magitek-pedestal-h: var(--pedestal-height);
   /* =========================================
      Responsive Chassis Geometry (V6)
      ========================================= */
   --rail-width: 12vw;
-  --hud-height: 12vh;
-  --pedestal-height: 12vh;
 
   /* Internal aliases (keep existing selectors stable) */
   --magitek-rail-width: var(--rail-width);
   --magitek-scroll-pad-x: var(--rail-width);
+}
+
+/* Ensure border-box for every descendant (incl. spacers/pseudos). */
+.chassis *,
+.chassis *::before,
+.chassis *::after {
+  box-sizing: border-box;
 }
 
 /* ============================================
@@ -136,7 +162,7 @@
   width: 100%;
   min-height: 100%;
   /* 80/10/10 push: keep content reachable in the visible zone */
-  padding-top: calc(var(--hud-height) + 2vh);
+  padding-top: calc(var(--hud-width) * var(--hud-frame-ratio, 0.31228) + 2vh);
   padding-bottom: calc(var(--pedestal-height) + 15vh);
 
   /* “Kiss the rails” on any screen */
@@ -202,6 +228,9 @@
   inset: 0;
   z-index: 3000; /* #layer-hud-mask */
   pointer-events: none;
+  height: auto; /* height liberation: let children self-size */
+  padding: 0; /* required: zero padding/margin for fixed HUD surface */
+  margin: 0;
 }
 
 /* ============================================
@@ -214,27 +243,38 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: calc(var(--magitek-hud-h, 0px) + env(safe-area-inset-top));
+  height: auto; /* height liberation */
+  min-height: 0;
+  padding-top: env(safe-area-inset-top);
   pointer-events: none;
   z-index: 60; /* above navShell, still within z-index:3 frame */
 }
 
 .crownFrame {
-  position: absolute;
-  top: env(safe-area-inset-top);
-  left: 12px;
-  /* Device stress test: allow crown to scale on tablets */
-  width: clamp(320px, calc(100vw - 24px), 1100px);
-  aspect-ratio: 1710 / 534;
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  /* Physical spacer drives height (SSOT) */
+  width: var(--magitek-hud-w);
   pointer-events: none; /* children opt-in */
 
-  /* Avatar/Bell relative anchors */
-  --hud-avatar-x: 15.52%;
-  --hud-avatar-y: 49.6%;
+  /* Avatar/Bell anchors */
+  --hud-avatar-left: 15.526%;
+  /* Calibrated: compensate mobile safe-area + subpixel rounding */
+  --hud-avatar-top: 50.5%;
+  /* Zero-gap percentage scaling: hole ratio + buffer */
+  --hud-hole-overflow: 2.7%; /* 17.3% + 2.7% ≈ 20% */
+  --hud-avatar-size: calc(var(--hud-hole-ratio, 17.3%) + var(--hud-hole-overflow, 2.7%));
   --hud-bell-right: 5%;
   --hud-bell-y: 50%;
-  /* iPad Air calibration: fill circle fully */
-  --hud-avatar-d: 18.5%;
+  --hud-bell-size: 9.94%;
+}
+
+.crownFrame::before {
+  content: '';
+  display: block;
+  /* SSOT Ratio: (534 / 1710) * 100% */
+  padding-top: var(--hud-frame-ratio-pct, 31.228%);
 }
 
 .crownBarImage {
@@ -244,23 +284,25 @@
   pointer-events: none;
   width: 100%;
   height: 100%;
+  display: block;
   user-select: none;
 }
 
-.crownAvatarBehind {
+.crownAvatarBehind,
+.avatarPortal {
   position: absolute;
   z-index: 2;
   pointer-events: auto; /* allow avatar upload click */
-  left: var(--hud-avatar-x);
-  top: var(--hud-avatar-y);
+  left: var(--hud-avatar-left, 15.526%);
+  top: var(--hud-avatar-top, 49.625%);
   transform: translate(-50%, -50%);
-  /* Avatar size is a % of HUD width (stress-test safe) */
-  width: var(--hud-avatar-d);
-  aspect-ratio: 1 / 1;
-  border-radius: 999px;
+  width: var(--hud-avatar-size, 20%);
+  height: auto;
+  aspect-ratio: 1 / 1 !important;
+  border-radius: 50%;
   overflow: hidden;
-  /* Exact center crop (avoid fractional drift) */
-  clip-path: circle(50% at 50% 50%);
+  /* Prevent starfield bleed if image underfills */
+  background: rgba(0, 0, 0, 0.9);
 }
 
 /* Notification bell - right crown */
@@ -268,19 +310,20 @@
   position: absolute;
   z-index: 4; /* above crown image */
   pointer-events: auto;
-  right: var(--hud-bell-right);
-  top: var(--hud-bell-y);
+  right: var(--hud-bell-right, 5%);
+  top: var(--hud-bell-y, 50%);
   transform: translateY(-50%);
-  width: calc(170 / 1710 * 100%);
-  aspect-ratio: 1 / 1;
+  width: var(--hud-bell-size, 9.94%);
+  height: auto;
+  aspect-ratio: 1 / 1 !important;
   overflow: hidden;
   display: grid;
   place-items: center;
   padding: 0;
-  border-radius: 999px;
+  border-radius: 50%;
   border: 1px solid rgba(0, 191, 255, 0.55);
-  /* Opaque enough to mask the underlying gear pattern */
-  background: rgba(0, 0, 0, 0.72);
+  /* Base surface is opaque: prevents any gear texture bleed-through */
+  background: rgba(0, 0, 0, 0.92);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   cursor: pointer;
@@ -293,9 +336,19 @@
 .crownNotificationButton::before {
   content: '';
   position: absolute;
+  /* Hard mask layer (slightly oversized) */
+  inset: -2px;
+  border-radius: inherit;
+  background: rgba(0, 0, 0, 0.96);
+  pointer-events: none;
+}
+
+.crownNotificationButton::after {
+  content: '';
+  position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: radial-gradient(circle at 50% 50%, rgba(0, 191, 255, 0.12), rgba(0, 0, 0, 0.82) 62%);
+  background: radial-gradient(circle at 50% 50%, rgba(0, 191, 255, 0.12), rgba(0, 0, 0, 0) 62%);
   pointer-events: none;
 }
 
@@ -328,6 +381,8 @@
   z-index: 1;
   user-select: none;
   pointer-events: none;
+  image-rendering: auto;
+  object-fit: contain;
   filter:
     drop-shadow(0 0 5px var(--magitek-cyan))
     drop-shadow(0 0 14px var(--magitek-cyan))

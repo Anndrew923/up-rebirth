@@ -1,8 +1,10 @@
-import { useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useUserStore } from '../../stores/userStore';
 import { useUIStore } from '../../stores/uiStore';
+import { t } from '../../i18n';
 import { auth, storage, db } from '../../firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { updateProfile } from 'firebase/auth';
 import { doc, updateDoc } from 'firebase/firestore';
 import { Timestamp } from 'firebase/firestore';
 import styles from '../../styles/modules/AvatarSection.module.css';
@@ -16,13 +18,18 @@ import styles from '../../styles/modules/AvatarSection.module.css';
  */
 export const AvatarSection = ({ isGuest = false, variant = 'full', className = '' }) => {
   const userProfile = useUserStore((state) => state.userProfile);
+  const stats = useUserStore((state) => state.stats);
   const updateUserStats = useUserStore((state) => state.updateUserStats);
   const setLoadingMessage = useUIStore((state) => state.setLoadingMessage);
   const setUserProfile = useUserStore((state) => state.setUserProfile);
   
   const [isUploading, setIsUploading] = useState(false);
   const [avatarError, setAvatarError] = useState(null);
+  const [imgFailed, setImgFailed] = useState(false);
   const fileInputRef = useRef(null);
+
+  const MAX_AVATAR_MB = 20;
+  const MAX_AVATAR_BYTES = MAX_AVATAR_MB * 1024 * 1024;
 
   // Compress image before upload
   const compressImage = (file, maxWidth = 800, maxHeight = 800, quality = 0.8) => {
@@ -86,10 +93,14 @@ export const AvatarSection = ({ isGuest = false, variant = 'full', className = '
         throw new Error('未登入，無法上傳頭像');
       }
 
+      const avatarVersion = Date.now();
+
       // Upload to Storage
       const avatarRef = ref(storage, `users/${userId}/avatar.jpg`);
+
       const metadata = {
         contentType: 'image/jpeg',
+        // Firebase Storage may cache aggressively; we bust cache by versioned URL query.
         customMetadata: {
           'uploaded-by': userId,
           'upload-time': new Date().toISOString(),
@@ -99,22 +110,34 @@ export const AvatarSection = ({ isGuest = false, variant = 'full', className = '
       await uploadBytes(avatarRef, blob, metadata);
       const url = await getDownloadURL(avatarRef);
 
+      // Best-effort: sync Firebase Auth profile photoURL for cross-device persistence.
+      // Non-blocking: rules/network issues should not break the upload flow.
+      try {
+        if (auth.currentUser) {
+          await updateProfile(auth.currentUser, { photoURL: url });
+        }
+      } catch {
+        // Intentionally silent
+      }
+
       // Update Firestore immediately (no debounce for avatar)
       const userRef = doc(db, 'users', userId);
       await updateDoc(userRef, {
         avatarUrl: url,
         photoURL: url,
+        avatarVersion,
         updatedAt: Timestamp.now(),
       });
 
       // Update userStore
-      await updateUserStats({ avatarUrl: url, photoURL: url });
+      await updateUserStats({ avatarUrl: url, photoURL: url, avatarVersion });
 
       // Update local profile state
       setUserProfile({
         ...userProfile,
         photoURL: url,
-        avatarUrl: url
+        avatarUrl: url,
+        avatarVersion,
       });
 
       setLoadingMessage(null);
@@ -141,9 +164,9 @@ export const AvatarSection = ({ isGuest = false, variant = 'full', className = '
       return;
     }
 
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      setAvatarError('圖片大小不能超過 5MB');
+    // Validate file size (max 20MB)
+    if (file.size > MAX_AVATAR_BYTES) {
+      setAvatarError(`圖片大小不能超過 ${MAX_AVATAR_MB}MB`);
       return;
     }
 
@@ -174,12 +197,40 @@ export const AvatarSection = ({ isGuest = false, variant = 'full', className = '
                      userProfile?.email?.split('@')[0] || 
                      '未命名用戶';
   
-  const avatarUrl = isGuest ? '/guest-avatar.svg' : (userProfile?.photoURL || userProfile?.avatarUrl);
+  // IMPORTANT: userProfile.photoURL comes from Firebase Auth and may be stale on some devices.
+  // stats.avatarUrl is loaded from Firestore and is the canonical source after login.
+  const rawAvatarUrl = isGuest
+    ? '/guest-avatar.svg'
+    : (stats?.avatarUrl || userProfile?.photoURL || userProfile?.avatarUrl);
+  const versionForCache = userProfile?.avatarVersion ?? stats?.avatarVersion;
 
-  const rootClassName =
-    variant === 'hud'
-      ? `${styles.avatarSection} ${styles.hudVariant} ${className}`.trim()
-      : `${styles.avatarSection} ${className}`.trim();
+  const withCacheBuster = (u, v) => {
+    if (!u || !v) return u;
+    try {
+      const base = typeof window !== 'undefined' ? window.location.origin : 'http://localhost';
+      const parsed = new URL(u, base);
+      parsed.searchParams.set('v', String(v));
+      return parsed.toString();
+    } catch {
+      const s = String(u);
+      const join = s.includes('?') ? '&' : '?';
+      return `${s}${join}v=${encodeURIComponent(String(v))}`;
+    }
+  };
+
+  const avatarUrl = withCacheBuster(rawAvatarUrl, versionForCache);
+
+  useEffect(() => {
+    // Reset failure state when URL changes
+    setImgFailed(false);
+    setAvatarError(null);
+  }, [avatarUrl]);
+
+  const isHud = variant === 'hud';
+
+  const rootClassName = isHud
+    ? `${styles.hudRoot} ${className}`.trim()
+    : `${styles.avatarSection} ${className}`.trim();
 
   return (
     <div className={rootClassName}>
@@ -189,26 +240,34 @@ export const AvatarSection = ({ isGuest = false, variant = 'full', className = '
         accept="image/*"
         onChange={handleFileChange}
         style={{ display: 'none' }}
-        aria-label="上傳頭像"
+        aria-label={t('profile.form.changePhoto', '更換大頭照')}
       />
       
       <div 
-        className={styles.avatarContainer}
+        className={isHud ? styles.hudContainer : styles.avatarContainer}
         onClick={handleAvatarClick}
         role={!isGuest && auth.currentUser ? "button" : undefined}
         tabIndex={!isGuest && auth.currentUser ? 0 : undefined}
         aria-label={!isGuest && auth.currentUser ? "點擊上傳頭像" : undefined}
         style={{ cursor: !isGuest && auth.currentUser ? 'pointer' : 'default' }}
       >
-        {avatarUrl ? (
+        {avatarUrl && !imgFailed ? (
           <img 
             src={avatarUrl} 
             alt={displayName}
-            className={styles.avatar}
-            loading="lazy"
+            className={isHud ? styles.hudImage : styles.avatar}
+            loading={variant === 'hud' ? 'eager' : 'lazy'}
+            key={avatarUrl}
+            onError={(e) => {
+              // Surface as visible error (especially important for HUD variant where errors were hidden)
+              const msg = '頭像載入失敗（可能是快取或權限問題）';
+              console.warn(msg, e);
+              setAvatarError(msg);
+              setImgFailed(true);
+            }}
           />
         ) : (
-          <div className={styles.avatarPlaceholder}>
+          <div className={isHud ? styles.hudPlaceholder : styles.avatarPlaceholder}>
             {displayName.charAt(0).toUpperCase()}
           </div>
         )}
@@ -219,10 +278,11 @@ export const AvatarSection = ({ isGuest = false, variant = 'full', className = '
         )}
         {!isGuest && auth.currentUser && (
           <div
-            className={styles.uploadHint}
+            className={isHud ? styles.hudBadge : styles.uploadHint}
             role="button"
             tabIndex={0}
-            aria-label="上傳頭像"
+            aria-label={t('profile.form.changePhoto', '更換大頭照')}
+            title={t('profile.form.changePhoto', '更換大頭照')}
             onClick={(e) => {
               e.stopPropagation();
               handleAvatarClick();
@@ -235,12 +295,12 @@ export const AvatarSection = ({ isGuest = false, variant = 'full', className = '
               }
             }}
           >
-            <span className={styles.uploadIcon}>📷</span>
+            <span className={isHud ? styles.hudBadgeIcon : styles.uploadIcon}>📷</span>
           </div>
         )}
       </div>
       
-      {variant !== 'hud' && avatarError && (
+      {avatarError && (
         <div className={styles.errorMessage} role="alert">
           {avatarError}
         </div>

@@ -1,6 +1,12 @@
 {
   "profile": {
     "form": {
+      "nicknamePlaceholder": "Your nickname",
+      "generateNickname": "Generate random nickname",
+      "numberPlaceholder": "0.0",
+      "numberPlaceholderInt": "0",
+      "bioPlaceholder": "Tell us about yourself...",
+      "changePhoto": "Change photo",
       "region": "Region",
       "profession": "Occupation",
       "regionPlaceholder": "e.g., Taipei / Taichung",

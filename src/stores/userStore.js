@@ -352,6 +352,7 @@ export const useUserStore = create((set, get) => ({
             nickname: sanitizeShortText(userData.nickname ?? userData.displayName, { maxLen: 30 }),
             bio: sanitizeShortText(userData.bio, { maxLen: 500 }),
             avatarUrl: userData.avatarUrl || null,
+            avatarVersion: toIntOrNull(userData.avatarVersion),
 
             // Legacy aliases (read-only / compatibility)
             bodyweight: bodyWeight,
@@ -532,6 +533,15 @@ export const useUserStore = create((set, get) => ({
       if (updates.photoURL !== undefined) {
         sanitizedUpdates.photoURL = updates.photoURL;
       }
+
+      // Avatar cache bust / versioning (milliseconds since epoch)
+      if (updates.avatarVersion !== undefined) {
+        const v = toIntOrNull(updates.avatarVersion);
+        if (v === null || v < 0) throw new Error('avatarVersion 必須是非負整數');
+        sanitizedUpdates.avatarVersion = v;
+      }
+
+      // avatarStoragePath intentionally removed (use canonical path: users/{uid}/avatar.jpg)
       
       // RPG Class
       if (updates.rpg_class !== undefined) {
@@ -671,7 +681,8 @@ export const useUserStore = create((set, get) => ({
           ...state.userProfile,
           ...(sanitizedUpdates.displayName && { displayName: sanitizedUpdates.displayName }),
           ...(sanitizedUpdates.photoURL && { photoURL: sanitizedUpdates.photoURL }),
-          ...(sanitizedUpdates.avatarUrl && { photoURL: sanitizedUpdates.avatarUrl })
+          ...(sanitizedUpdates.avatarUrl && { photoURL: sanitizedUpdates.avatarUrl, avatarUrl: sanitizedUpdates.avatarUrl }),
+          ...(sanitizedUpdates.avatarVersion && { avatarVersion: sanitizedUpdates.avatarVersion })
         }
       });
 

@@ -11,50 +11,76 @@
   gap: var(--spacing-md);
 }
 
-.hudVariant {
+/* =========================================================
+   HUD Variant (size-agnostic, no fixed px, no !important)
+   - The portal (MagitekChassis) owns the size.
+   - AvatarSection HUD must behave like a liquid and fill 100%.
+   ========================================================= */
+
+.hudRoot {
+  width: 100%;
+  height: 100%;
+  display: block;
   padding: 0;
-  gap: 0;
+  margin: 0;
+
+  /* SSOT for camera badge (theme-swappable) */
+  --avatar-badge-offset: 8%;
+  --avatar-badge-size: clamp(18px, 5vw, 28px);
+}
+
+.hudContainer {
+  position: relative;
   width: 100%;
   height: 100%;
+  border-radius: 50%;
+  overflow: hidden; /* secondary clamp (in addition to chassis portal) */
 }
 
-.hudVariant .avatarContainer {
+.hudImage {
   width: 100%;
   height: 100%;
-}
-
-.hudVariant .avatarContainer:hover {
-  transform: none;
-}
-
-.hudVariant .avatar {
-  border-width: 0;
+  border-radius: 50%;
+  object-fit: cover; /* Zero distortion policy */
+  border: 0;
   box-shadow: none;
+  display: block;
 }
 
-.hudVariant .avatarPlaceholder {
-  border-width: 0;
-  box-shadow: none;
+.hudPlaceholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 2.2rem;
+  font-weight: 700;
+  color: white;
+  background: rgba(0, 0, 0, 0.35);
 }
 
-.hudVariant .uploadHint {
-  /* HUD: camera action badge @ 4 o'clock (avoid face obstruction) */
+.hudBadge {
+  position: absolute;
+  right: var(--avatar-badge-offset);
+  bottom: var(--avatar-badge-offset);
+  width: var(--avatar-badge-size);
+  height: var(--avatar-badge-size);
+  z-index: 2;
+  display: grid;
+  place-items: center;
   opacity: 0.95;
-  transform: none;
-  width: 28%;
-  height: 28%;
-  right: 6%;
-  bottom: 6%;
+
   background: rgba(0, 0, 0, 0.55);
   border: 1px solid rgba(0, 191, 255, 0.65);
+  border-radius: 999px;
   box-shadow:
     0 0 10px rgba(0, 191, 255, 0.40),
     0 0 24px rgba(0, 191, 255, 0.18);
 }
 
-.hudVariant .uploadIcon {
-  font-size: 0.95rem;
+.hudBadgeIcon {
+  font-size: var(--avatar-badge-size);
   line-height: 1;
   filter: drop-shadow(0 0 5px rgba(0, 191, 255, 0.85));
 }

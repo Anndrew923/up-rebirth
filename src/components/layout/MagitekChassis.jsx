@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback } from 'react';
 import { useUIStore } from '../../stores/uiStore';
 import { useUserStore } from '../../stores/userStore';
 import styles from '../../styles/modules/MagitekChassis.module.css';
@@ -37,112 +37,12 @@ export const MagitekChassis = ({ background = null, children, foreground = null 
   // V6 Spec: Bottom pedestal + side rails are the ONLY navigation entry points (authenticated surface only).
   const navigationEnabled = Boolean(isAuthenticated);
 
-  // Structural closure is required whenever navigation is enabled (pedestal height affects layout),
-  // or when a page provides a foreground HUD/exoskeleton.
-  const structuralClosureEnabled = navigationEnabled || Boolean(foreground);
-
-  // ----------------------------
-  // V6 Crown geometry (hud-top-bar.png)
-  // ----------------------------
-  const HUD_NATURAL = useMemo(
-    () => ({
-      width: 1710,
-      height: 534,
-      // Verified by alpha-component analysis on hud-top-bar.png (enclosed transparent circle)
-      // Component bbox: X[119..413], Y[117..412]
-      // centroid ≈ (265.49, 264.94), diameter ≈ (295..296)
-      holeCenterX: 265.5,
-      holeCenterY: 265,
-      holeDiameter: 296,
-    }),
-    []
-  );
-
-  // Crown height is now measured from the responsive HUD container (no pixel offsets).
-  const crownRef = useRef(null);
-  const [hudHeightPx, setHudHeightPx] = useState(0);
-
-  // Measure pedestal height and expose it via CSS var for precise rail docking.
-  const pedestalRef = useRef(null);
-  const [pedestalHeightPx, setPedestalHeightPx] = useState(0);
-
-  const PEDESTAL_NATURAL = useMemo(
-    () => ({
-      width: 1284,
-      height: 429,
-    }),
-    []
-  );
-
-  useEffect(() => {
-    if (!navigationEnabled) return;
-    const el = crownRef.current;
-    if (!el || typeof ResizeObserver === 'undefined') return;
-
-    const ro = new ResizeObserver(() => {
-      const h = el.getBoundingClientRect().height;
-      if (Number.isFinite(h) && h > 0) setHudHeightPx(Math.round(h));
-    });
-    ro.observe(el);
-
-    const h0 = el.getBoundingClientRect().height;
-    if (Number.isFinite(h0) && h0 > 0) setHudHeightPx(Math.round(h0));
-
-    return () => ro.disconnect();
-  }, [navigationEnabled]);
-
-  const predictedHudHeightPx = useMemo(() => {
-    const vw = typeof window !== 'undefined' ? window.innerWidth : 390;
-    const hudWidth = Math.min(1100, Math.max(320, vw - 24));
-    return Math.round((hudWidth * HUD_NATURAL.height) / HUD_NATURAL.width);
-  }, [HUD_NATURAL.height, HUD_NATURAL.width]);
-
-  const resolvedHudHeightPx = hudHeightPx || predictedHudHeightPx;
-
-  useEffect(() => {
-    if (!navigationEnabled) return;
-
-    const computePredicted = () => {
-      const vw = typeof window !== 'undefined' ? window.innerWidth : 390;
-      const w = Math.min(PEDESTAL_NATURAL.width, vw);
-      const h = Math.round((w * PEDESTAL_NATURAL.height) / PEDESTAL_NATURAL.width);
-      setPedestalHeightPx(h);
-    };
-
-    computePredicted();
-    window.addEventListener('resize', computePredicted);
-    return () => window.removeEventListener('resize', computePredicted);
-  }, [navigationEnabled, PEDESTAL_NATURAL.height, PEDESTAL_NATURAL.width]);
-
-  useEffect(() => {
-    if (!navigationEnabled) return;
-    const el = pedestalRef.current;
-    if (!el || typeof ResizeObserver === 'undefined') return;
-
-    const ro = new ResizeObserver(() => {
-      const h = el.getBoundingClientRect().height;
-      if (Number.isFinite(h) && h > 0) setPedestalHeightPx(Math.round(h));
-    });
-    ro.observe(el);
-
-    const h0 = el.getBoundingClientRect().height;
-    if (Number.isFinite(h0) && h0 > 0) setPedestalHeightPx(Math.round(h0));
-
-    return () => ro.disconnect();
-  }, [navigationEnabled]);
-
   const goHash = useCallback((hash) => {
     window.location.hash = hash;
   }, []);
 
   return (
-    <div
-      className={styles.chassis}
-      style={{
-        '--magitek-pedestal-h': navigationEnabled ? `${pedestalHeightPx}px` : '0px',
-        '--magitek-hud-h': navigationEnabled ? `${resolvedHudHeightPx}px` : '0px',
-      }}
-    >
+    <div className={styles.chassis}>
       {/* Background Layer - Ambient effects, decorative elements */}
       <div id="layer-master-bg" className={styles.backgroundLayer}>
         <img className={styles.masterBgImg} src={masterNebula} alt="" aria-hidden="true" />
@@ -167,9 +67,9 @@ export const MagitekChassis = ({ background = null, children, foreground = null 
           {/* V6 Crown (hud-top-bar.png) - must not be obscured by nav layers */}
           {navigationEnabled && (
             <div className={styles.crownRoot} aria-label="magitek-crown">
-              <div className={styles.crownFrame} ref={crownRef} aria-hidden="false">
+              <div className={styles.crownFrame} aria-hidden="false">
                 {/* Avatar positioned BEHIND the HUD image (through the observation window) */}
-                <div className={styles.crownAvatarBehind}>
+                <div className={styles.avatarPortal}>
                   <AvatarSection variant="hud" />
                 </div>
 
@@ -265,7 +165,7 @@ export const MagitekChassis = ({ background = null, children, foreground = null 
 
           {/* Structural Closure: Bottom Pedestal */}
           {navigationEnabled && (
-            <div className={styles.pedestalWrapper} ref={pedestalRef}>
+            <div className={styles.pedestalWrapper}>
               <img className={styles.pedestalImg} src={bottomPedestal} alt="" aria-hidden="true" />
 
               {/* Trinity Entry Slots (placeholders) */}
