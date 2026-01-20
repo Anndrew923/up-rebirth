@@ -3,8 +3,17 @@
  * Three-Layer Architecture System
  * 
  * Strict Style Isolation: CSS Modules only
- * No global CSS - Design tokens from :root in index.css
+ * Design tokens live in :root (index.css). Magitek theme tokens are injected
+ * globally here to enable theme-switchable skinning without touching component CSS.
  */
+
+:global(:root) {
+  --magitek-cyan: #00BFFF;
+  --magitek-glass-bg: rgba(0, 0, 0, 0.45);
+  --magitek-border-glow: rgba(0, 191, 255, 0.3);
+  --magitek-focus-glow: rgba(0, 191, 255, 0.7);
+  --magitek-blur: 10px;
+}
 
 .chassis {
   position: relative;
@@ -82,12 +91,15 @@
 
      The offsets (4vh / 3vh / 4vh) keep behavior stable if vars change.
   */
+  /* IMPORTANT: use WHITE (not black) for broad mask compatibility.
+     Some engines treat mask as luminance; black=0 (hidden), white=1 (visible).
+  */
   -webkit-mask-image: linear-gradient(
     to bottom,
     transparent 0,
     transparent calc(var(--hud-height) - 4vh),
-    rgba(0, 0, 0, 1) calc(var(--hud-height) + 3vh),
-    rgba(0, 0, 0, 1) calc(100vh - var(--pedestal-height) - 3vh),
+    rgba(255, 255, 255, 1) calc(var(--hud-height) + 3vh),
+    rgba(255, 255, 255, 1) calc(100vh - var(--pedestal-height) - 3vh),
     transparent calc(100vh - var(--pedestal-height) + 4vh),
     transparent 100%
   );
@@ -95,8 +107,8 @@
     to bottom,
     transparent 0,
     transparent calc(var(--hud-height) - 4vh),
-    rgba(0, 0, 0, 1) calc(var(--hud-height) + 3vh),
-    rgba(0, 0, 0, 1) calc(100vh - var(--pedestal-height) - 3vh),
+    rgba(255, 255, 255, 1) calc(var(--hud-height) + 3vh),
+    rgba(255, 255, 255, 1) calc(100vh - var(--pedestal-height) - 3vh),
     transparent calc(100vh - var(--pedestal-height) + 4vh),
     transparent 100%
   );
@@ -116,6 +128,8 @@
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   pointer-events: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .scrollContent {
@@ -205,13 +219,31 @@
   z-index: 60; /* above navShell, still within z-index:3 frame */
 }
 
-.crownBarImage {
+.crownFrame {
   position: absolute;
   top: env(safe-area-inset-top);
   left: 12px;
+  /* Device stress test: allow crown to scale on tablets */
+  width: clamp(320px, calc(100vw - 24px), 1100px);
+  aspect-ratio: 1710 / 534;
+  pointer-events: none; /* children opt-in */
+
+  /* Avatar/Bell relative anchors */
+  --hud-avatar-x: 15.52%;
+  --hud-avatar-y: 49.6%;
+  --hud-bell-right: 5%;
+  --hud-bell-y: 50%;
+  /* iPad Air calibration: fill circle fully */
+  --hud-avatar-d: 18.5%;
+}
+
+.crownBarImage {
+  position: absolute;
+  inset: 0;
   z-index: 3;
   pointer-events: none;
-  transform-origin: left top;
+  width: 100%;
+  height: 100%;
   user-select: none;
 }
 
@@ -219,11 +251,87 @@
   position: absolute;
   z-index: 2;
   pointer-events: auto; /* allow avatar upload click */
-  width: 92px;
-  height: 92px;
+  left: var(--hud-avatar-x);
+  top: var(--hud-avatar-y);
+  transform: translate(-50%, -50%);
+  /* Avatar size is a % of HUD width (stress-test safe) */
+  width: var(--hud-avatar-d);
+  aspect-ratio: 1 / 1;
   border-radius: 999px;
   overflow: hidden;
-  clip-path: circle(46px at 46px 46px);
+  /* Exact center crop (avoid fractional drift) */
+  clip-path: circle(50% at 50% 50%);
+}
+
+/* Notification bell - right crown */
+.crownNotificationButton {
+  position: absolute;
+  z-index: 4; /* above crown image */
+  pointer-events: auto;
+  right: var(--hud-bell-right);
+  top: var(--hud-bell-y);
+  transform: translateY(-50%);
+  width: calc(170 / 1710 * 100%);
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 191, 255, 0.55);
+  /* Opaque enough to mask the underlying gear pattern */
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  cursor: pointer;
+  transition: transform 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+  box-shadow:
+    0 0 14px rgba(0, 191, 255, 0.48),
+    0 0 30px rgba(0, 191, 255, 0.22);
+}
+
+.crownNotificationButton::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at 50% 50%, rgba(0, 191, 255, 0.12), rgba(0, 0, 0, 0.82) 62%);
+  pointer-events: none;
+}
+
+.crownNotificationButton:hover {
+  transform: translateY(calc(-50% - 1px));
+  border-color: rgba(0, 191, 255, 0.75);
+  background: rgba(0, 0, 0, 0.80);
+  box-shadow:
+    0 0 18px rgba(0, 191, 255, 0.62),
+    0 0 38px rgba(0, 191, 255, 0.26);
+}
+
+.crownNotificationButton:active {
+  transform: translateY(-50%) scale(0.98);
+}
+
+.crownNotificationButton:focus-visible {
+  outline: none;
+  border-color: rgba(0, 191, 255, 0.9);
+  box-shadow:
+    0 0 0 2px rgba(0, 191, 255, 0.22),
+    0 0 22px rgba(0, 191, 255, 0.66),
+    0 0 44px rgba(0, 191, 255, 0.28);
+}
+
+.crownNotificationIcon {
+  width: 92%;
+  height: 92%;
+  position: relative;
+  z-index: 1;
+  user-select: none;
+  pointer-events: none;
+  filter:
+    drop-shadow(0 0 5px var(--magitek-cyan))
+    drop-shadow(0 0 14px var(--magitek-cyan))
+    drop-shadow(0 0 28px rgba(0, 191, 255, 0.45));
 }
 
 /* ============================================

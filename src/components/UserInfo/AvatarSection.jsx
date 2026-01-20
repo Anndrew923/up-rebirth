@@ -87,7 +87,7 @@ export const AvatarSection = ({ isGuest = false, variant = 'full', className = '
       }
 
       // Upload to Storage
-      const avatarRef = ref(storage, `avatars/${userId}/avatar.jpg`);
+      const avatarRef = ref(storage, `users/${userId}/avatar.jpg`);
       const metadata = {
         contentType: 'image/jpeg',
         customMetadata: {
@@ -103,6 +103,7 @@ export const AvatarSection = ({ isGuest = false, variant = 'full', className = '
       const userRef = doc(db, 'users', userId);
       await updateDoc(userRef, {
         avatarUrl: url,
+        photoURL: url,
         updatedAt: Timestamp.now(),
       });
 
@@ -217,7 +218,23 @@ export const AvatarSection = ({ isGuest = false, variant = 'full', className = '
           </div>
         )}
         {!isGuest && auth.currentUser && (
-          <div className={styles.uploadHint}>
+          <div
+            className={styles.uploadHint}
+            role="button"
+            tabIndex={0}
+            aria-label="上傳頭像"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleAvatarClick();
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                e.stopPropagation();
+                handleAvatarClick();
+              }
+            }}
+          >
             <span className={styles.uploadIcon}>📷</span>
           </div>
         )}

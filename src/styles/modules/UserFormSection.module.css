@@ -12,6 +12,9 @@
   border-radius: var(--border-radius-lg);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
   margin-bottom: var(--spacing-lg);
+  /* Visibility audit: keep form above masked scroll surface, below frame */
+  position: relative;
+  z-index: 2100;
 }
 
 .reminder {
@@ -86,26 +89,46 @@
 .label {
   font-size: var(--font-size-base);
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.98);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+    'Courier New', 'Roboto Mono', monospace;
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.55);
 }
 
 .input,
 .select,
 .textarea {
   padding: var(--spacing-sm) var(--spacing-md);
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: var(--magitek-glass-bg);
+  border: 1px solid var(--magitek-border-glow);
   border-radius: var(--border-radius-md);
   font-size: var(--font-size-base);
   font-family: var(--font-family-base);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  color: rgba(255, 255, 255, 0.98);
+  caret-color: var(--magitek-cyan);
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(var(--magitek-blur));
+  -webkit-backdrop-filter: blur(var(--magitek-blur));
+  transition: border-color 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
 }
 
 .input:focus,
 .select:focus,
 .textarea:focus {
   outline: none;
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+  border-color: var(--magitek-focus-glow);
+  box-shadow:
+    0 0 0 2px rgba(0, 191, 255, 0.16),
+    0 0 18px rgba(0, 191, 255, 0.38),
+    inset 0 0 18px rgba(0, 191, 255, 0.12);
+  animation: magitekNeonPulse 1.35s ease-in-out infinite;
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: rgba(255, 255, 255, 0.55);
+  text-shadow: none;
 }
 
 .inputError {
@@ -114,12 +137,44 @@
 
 .inputError:focus {
   border-color: var(--color-danger);
-  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+  box-shadow:
+    0 0 0 2px rgba(220, 53, 69, 0.16),
+    0 0 18px rgba(220, 53, 69, 0.28);
+  animation: none;
 }
 
 .textarea {
   resize: vertical;
   min-height: 100px;
+}
+
+@keyframes magitekNeonPulse {
+  0% {
+    box-shadow:
+      0 0 0 2px rgba(0, 191, 255, 0.12),
+      0 0 14px rgba(0, 191, 255, 0.26),
+      inset 0 0 14px rgba(0, 191, 255, 0.10);
+  }
+  50% {
+    box-shadow:
+      0 0 0 2px rgba(0, 191, 255, 0.22),
+      0 0 26px rgba(0, 191, 255, 0.48),
+      inset 0 0 22px rgba(0, 191, 255, 0.16);
+  }
+  100% {
+    box-shadow:
+      0 0 0 2px rgba(0, 191, 255, 0.12),
+      0 0 14px rgba(0, 191, 255, 0.26),
+      inset 0 0 14px rgba(0, 191, 255, 0.10);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .input:focus,
+  .select:focus,
+  .textarea:focus {
+    animation: none;
+  }
 }
 
 .charCount {

@@ -1,6 +1,7 @@
 import { useRouteCleanup } from '../../hooks/useRouteCleanup';
 import { MagitekChassis } from '../layout/MagitekChassis';
 import { RadarChartSection } from '../UserInfo/RadarChartSection';
+import { UserFormSection } from '../UserInfo/UserFormSection';
 import styles from '../../styles/modules/ConsolePages.module.css';
 
 /**
@@ -21,6 +22,7 @@ export default function HomePage() {
 
         <div className={styles.shell}>
           <RadarChartSection loading={false} />
+          <UserFormSection />
         </div>
       </div>
     </MagitekChassis>

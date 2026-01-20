@@ -5,7 +5,7 @@ import styles from '../../styles/modules/ConsolePages.module.css';
 
 /**
  * Settings (核心調律)
- * Placeholder for configuration surface.
+ * V6: Core Tuning route surface.
  */
 export default function SettingsPage() {
   useRouteCleanup('settings');
@@ -27,7 +27,7 @@ export default function SettingsPage() {
           <div className={styles.card}>
             <div className={styles.cardTitle}>設定入口已接上</div>
             <div className={styles.cardText}>
-              目前設定相關 UI 仍在既有模組中（例如個人頁的設定彈窗）。這個頁面先作為 V6 的正式路由落點。
+              個人資料表格已移至「主控台」雷達圖下方，方便一站式更新。此頁面保留作為 V6 設定/工具的正式路由落點。
             </div>
             <div className={styles.actions}>
               <button type="button" className={styles.primaryBtn} onClick={() => go('#home')}>

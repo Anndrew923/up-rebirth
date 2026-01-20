@@ -1,0 +1,54 @@
+{
+  "profile": {
+    "form": {
+      "region": "Region",
+      "profession": "Occupation",
+      "regionPlaceholder": "e.g., Taipei / Taichung",
+      "professionPlaceholder": "e.g., Engineer, Student, Teacher...",
+      "country": "Country/Region",
+      "city": "City",
+      "district": "District",
+      "select": "Select",
+      "selectCountry": "Select a country/region",
+      "selectCity": "Select a city",
+      "selectDistrict": "Select a district",
+      "searchProfession": "Search occupation..."
+    },
+    "countries": {
+      "TW": "Taiwan",
+      "CN": "China",
+      "US": "United States",
+      "JP": "Japan",
+      "KR": "Korea",
+      "SG": "Singapore",
+      "MY": "Malaysia",
+      "HK": "Hong Kong",
+      "MO": "Macau",
+      "TH": "Thailand",
+      "VN": "Vietnam",
+      "PH": "Philippines",
+      "ID": "Indonesia",
+      "AU": "Australia",
+      "NZ": "New Zealand",
+      "CA": "Canada",
+      "GB": "United Kingdom",
+      "DE": "Germany",
+      "FR": "France",
+      "OTHER": "Other"
+    },
+    "profession": {
+      "engineering": "Engineering",
+      "medical": "Medical",
+      "coach": "Coach",
+      "student": "Student",
+      "police_military": "Police/Military",
+      "business": "Business/Finance/Legal",
+      "freelance": "Freelance/Design/Arts",
+      "service": "Service",
+      "professional_athlete": "Professional Athlete",
+      "artist_performer": "Arts/Performance",
+      "other": "Other"
+    }
+  }
+}
+

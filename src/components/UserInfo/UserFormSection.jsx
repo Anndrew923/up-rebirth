@@ -1,7 +1,11 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useMemo, useState, useEffect, useCallback } from 'react';
 import { useUserStore } from '../../stores/userStore';
 import { useUIStore } from '../../stores/uiStore';
 import { sanitizeInput } from '../../utils/validation';
+import { getCurrentLanguage, t } from '../../i18n';
+import { MagitekDropdown } from '../ui/MagitekDropdown';
+import { getCityNameEn, getDistrictNameEn, getDistrictsByCity, isValidDistrict } from '../../utils/taiwanDistricts';
+import { PROFESSION_REVERSE_MAP } from '../../utils/professionMaps';
 import styles from '../../styles/modules/UserFormSection.module.css';
 
 /**
@@ -25,7 +29,11 @@ export const UserFormSection = () => {
     height: '',
     age: '',
     gender: 'male',
-    bio: ''
+    country: 'TW',
+    city: '',
+    district: '',
+    jobCategory: '',
+    bio: '',
   });
 
   const [errors, setErrors] = useState({});
@@ -35,13 +43,31 @@ export const UserFormSection = () => {
   // Initialize form data from store
   useEffect(() => {
     if (userProfile || stats) {
+      const rawCountry = stats?.country || 'TW';
+      const rawCity = stats?.city || '';
+      const rawDistrict = stats?.district || '';
+      const legacyRegion = stats?.region || '';
+
+      const normalizedJob =
+        (stats?.job_category && PROFESSION_REVERSE_MAP[stats.job_category]) ||
+        PROFESSION_REVERSE_MAP[stats?.profession] ||
+        stats?.job_category ||
+        stats?.profession ||
+        '';
+
       setFormData({
         nickname: userProfile?.nickname || userProfile?.displayName || '',
         weight: stats?.bodyWeight ?? stats?.weight ?? stats?.bodyweight ?? '',
         height: stats?.height || '',
         age: stats?.age || '',
         gender: stats?.gender || 'male',
-        bio: stats?.bio || ''
+        // Location (migrated)
+        country: rawCountry,
+        city: rawCity || (rawCountry === 'TW' ? legacyRegion : ''),
+        district: rawDistrict || (rawCountry === 'TW' && isValidDistrict(rawCity || legacyRegion, legacyRegion) ? legacyRegion : ''),
+        // Profession (migrated)
+        jobCategory: normalizedJob,
+        bio: stats?.bio || '',
       });
     }
   }, [userProfile, stats]);
@@ -79,6 +105,130 @@ export const UserFormSection = () => {
       });
     }
   }, [errors]);
+
+  const currentLanguage = getCurrentLanguage();
+  const isEnglish = currentLanguage === 'en-US';
+
+  const countryOptions = useMemo(() => {
+    const codes = [
+      'TW',
+      'CN',
+      'US',
+      'JP',
+      'KR',
+      'SG',
+      'MY',
+      'HK',
+      'MO',
+      'TH',
+      'VN',
+      'PH',
+      'ID',
+      'AU',
+      'NZ',
+      'CA',
+      'GB',
+      'DE',
+      'FR',
+      'OTHER',
+    ];
+    return codes.map((code) => ({ value: code, label: t(`profile.countries.${code}`) }));
+  }, []);
+
+  const cityGroups = useMemo(() => {
+    const groups = [
+      {
+        groupKey: 'special',
+        groupZh: '直轄市',
+        groupEn: 'Special Municipality',
+        cities: ['台北市', '新北市', '桃園市', '台中市', '台南市', '高雄市'],
+      },
+      {
+        groupKey: 'provincial',
+        groupZh: '省轄市',
+        groupEn: 'Provincial City',
+        cities: ['基隆市', '新竹市', '嘉義市'],
+      },
+      {
+        groupKey: 'county',
+        groupZh: '縣',
+        groupEn: 'County',
+        cities: [
+          '新竹縣',
+          '苗栗縣',
+          '彰化縣',
+          '南投縣',
+          '雲林縣',
+          '嘉義縣',
+          '屏東縣',
+          '宜蘭縣',
+          '花蓮縣',
+          '台東縣',
+          '澎湖縣',
+          '金門縣',
+          '連江縣',
+        ],
+      },
+    ];
+
+    return groups.map((g) => ({
+      group: isEnglish ? g.groupEn : g.groupZh,
+      options: g.cities.map((c) => ({ value: c, label: isEnglish ? getCityNameEn(c) : c })),
+    }));
+  }, [isEnglish]);
+
+  const availableDistricts = useMemo(() => {
+    if (formData.country !== 'TW') return [];
+    if (!formData.city) return [];
+    return getDistrictsByCity(formData.city);
+  }, [formData.city, formData.country]);
+
+  const districtOptions = useMemo(() => {
+    return availableDistricts.map((d) => ({ value: d, label: isEnglish ? getDistrictNameEn(d) : d }));
+  }, [availableDistricts, isEnglish]);
+
+  const professionOptions = useMemo(() => {
+    const keys = [
+      'engineering',
+      'medical',
+      'coach',
+      'student',
+      'police_military',
+      'business',
+      'freelance',
+      'service',
+      'professional_athlete',
+      'artist_performer',
+      'other',
+    ];
+    return keys.map((k) => ({ value: k, label: t(`profile.profession.${k}`) }));
+  }, []);
+
+  const onCountryChange = useCallback(
+    (next) => {
+      setFormData((prev) => {
+        if (next !== 'TW') {
+          return { ...prev, country: next, city: '', district: '' };
+        }
+        return { ...prev, country: next, city: '', district: '' };
+      });
+    },
+    [setFormData]
+  );
+
+  const onCityChange = useCallback(
+    (next) => {
+      setFormData((prev) => ({ ...prev, city: next, district: '' }));
+    },
+    [setFormData]
+  );
+
+  const onDistrictChange = useCallback(
+    (next) => {
+      setFormData((prev) => ({ ...prev, district: next }));
+    },
+    [setFormData]
+  );
 
   // Handle nickname change
   const handleNicknameChange = useCallback((value) => {
@@ -185,6 +335,19 @@ export const UserFormSection = () => {
 
       if (formData.bio) {
         updates.bio = sanitizeInput(formData.bio);
+      }
+
+      // Location: flatten for Firestore + keep legacy compatibility
+      if (formData.country) updates.country = sanitizeInput(formData.country);
+      if (formData.city) updates.city = sanitizeInput(formData.city);
+      if (formData.district) updates.district = sanitizeInput(formData.district);
+      // Legacy field still used by filters in some surfaces
+      updates.region = sanitizeInput(formData.district || formData.city || '');
+
+      // Profession: store canonical job_category + keep profession alias
+      if (formData.jobCategory) {
+        updates.job_category = sanitizeInput(formData.jobCategory);
+        updates.profession = sanitizeInput(formData.jobCategory);
       }
 
       // Use userStore.updateUserStats() which includes Zero-Trust validation
@@ -335,6 +498,60 @@ export const UserFormSection = () => {
             </select>
           </div>
         </div>
+
+        {/* Region (migrated) + Occupation (migrated) */}
+        <div className={styles.formRow}>
+          <div className={styles.formGroup}>
+            <label className={styles.label}>{t('profile.form.country')}</label>
+            <MagitekDropdown
+              id="country"
+              value={formData.country}
+              options={countryOptions}
+              placeholder={t('profile.form.selectCountry')}
+              onChange={onCountryChange}
+            />
+          </div>
+
+          <div className={styles.formGroup}>
+            <label className={styles.label}>{t('profile.form.profession')}</label>
+            <MagitekDropdown
+              id="jobCategory"
+              value={formData.jobCategory}
+              options={professionOptions}
+              placeholder={t('profile.form.select')}
+              onChange={(next) => handleInputChange('jobCategory', next)}
+              searchable
+              searchPlaceholder={t('profile.form.searchProfession')}
+            />
+          </div>
+        </div>
+
+        {formData.country === 'TW' && (
+          <div className={styles.formRow}>
+            <div className={styles.formGroup}>
+              <label className={styles.label}>{t('profile.form.city')}</label>
+              <MagitekDropdown
+                id="city"
+                value={formData.city}
+                options={cityGroups}
+                placeholder={t('profile.form.selectCity')}
+                onChange={onCityChange}
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.label}>{t('profile.form.district')}</label>
+              <MagitekDropdown
+                id="district"
+                value={formData.district}
+                options={districtOptions}
+                placeholder={t('profile.form.selectDistrict')}
+                onChange={onDistrictChange}
+                disabled={!formData.city}
+              />
+            </div>
+          </div>
+        )}
 
         {/* Bio field */}
         <div className={styles.formGroup}>

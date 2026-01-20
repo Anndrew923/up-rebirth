@@ -2,8 +2,7 @@ import { useRouteCleanup } from '../../hooks/useRouteCleanup';
 import { useUserStore } from '../../stores/userStore';
 import { MagitekChassis } from '../layout/MagitekChassis';
 import { RadarChartSection } from './RadarChartSection';
-import { ProfileFormSection } from './ProfileFormSection';
-import { SettingsModals } from './SettingsModals';
+import { UserFormSection } from './UserFormSection';
 
 import styles from '../../styles/modules/UserInfoPage.module.css';
 
@@ -22,39 +21,27 @@ export const UserInfoPage = () => {
   // Navigation immunity
   useRouteCleanup('user-info');
 
-  // Loading state
-  if (isLoading) {
-    return (
-      <MagitekChassis>
-        <div className={styles.pageState}>
-          <div className={styles.loadingCard}>
-            <div className={styles.spinner} />
-            <p>載入中...</p>
-          </div>
-        </div>
-      </MagitekChassis>
-    );
-  }
-
-  if (!isAuthenticated || !userProfile) {
-    return (
-      <MagitekChassis>
-        <div className={styles.pageState}>
-          <div className={styles.loadingCard}>
-            <p>請先登入以查看個人資料</p>
-          </div>
-        </div>
-      </MagitekChassis>
-    );
-  }
+  // DEBUG / Force Render:
+  // We intentionally DO NOT early-return on loading/auth here.
+  // Objective: confirm raw form inputs are mounted inside MagitekChassis -> .scrollInnerView.
+  const showDebugGate = isLoading || !isAuthenticated || !userProfile;
 
   return (
     <MagitekChassis>
       <div className={styles.scrollRoot}>
         <div className={styles.contentShell}>
-          <RadarChartSection loading={false} />
-          <ProfileFormSection />
-          <SettingsModals />
+          {showDebugGate && (
+            <div className={styles.loadingCard} role="alert">
+              <p style={{ margin: 0 }}>
+                DEBUG：強制渲染表單中（isLoading={String(isLoading)} / isAuthenticated={String(isAuthenticated)} / hasProfile=
+                {String(Boolean(userProfile))}）
+              </p>
+            </div>
+          )}
+
+          <RadarChartSection loading={Boolean(isLoading)} />
+          {/* Force-mount form directly (Search & Rescue) */}
+          <UserFormSection />
         </div>
       </div>
     </MagitekChassis>

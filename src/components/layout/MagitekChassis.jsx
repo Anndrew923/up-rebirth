@@ -4,11 +4,13 @@ import { useUserStore } from '../../stores/userStore';
 import styles from '../../styles/modules/MagitekChassis.module.css';
 import bottomPedestal from '../../assets/images/magitek/bottom_pedestal.png';
 import hudTopBar from '../../assets/images/magitek/hud-top-bar.png';
+import hudBell from '../../assets/images/magitek/hud-bell.svg';
 import masterNebula from '../../assets/images/magitek/master-bg-nebula.png';
 import railTop from '../../assets/images/magitek/rail-top.png';
 import railMid from '../../assets/images/magitek/rail-mid.png';
 import railBottom from '../../assets/images/magitek/rail-bottom.png';
 import { AvatarSection } from '../UserInfo/AvatarSection';
+import { SettingsModals } from '../UserInfo/SettingsModals';
 
 /**
  * Magitek Resonance 2.0 Chassis
@@ -28,6 +30,7 @@ import { AvatarSection } from '../UserInfo/AvatarSection';
 export const MagitekChassis = ({ background = null, children, foreground = null }) => {
   const isOverlayVisible = useUIStore((state) => state.isOverlayVisible);
   const activeModals = useUIStore((state) => state.activeModals);
+  const openModal = useUIStore((state) => state.openModal);
 
   const isAuthenticated = useUserStore((state) => state.isAuthenticated);
 
@@ -45,14 +48,19 @@ export const MagitekChassis = ({ background = null, children, foreground = null 
     () => ({
       width: 1710,
       height: 534,
-      holeCenterX: 266.5,
-      holeCenterY: 254,
-      holeDiameter: 294,
+      // Verified by alpha-component analysis on hud-top-bar.png (enclosed transparent circle)
+      // Component bbox: X[119..413], Y[117..412]
+      // centroid ≈ (265.49, 264.94), diameter ≈ (295..296)
+      holeCenterX: 265.5,
+      holeCenterY: 265,
+      holeDiameter: 296,
     }),
     []
   );
 
-  const [hudScale, setHudScale] = useState(0.22);
+  // Crown height is now measured from the responsive HUD container (no pixel offsets).
+  const crownRef = useRef(null);
+  const [hudHeightPx, setHudHeightPx] = useState(0);
 
   // Measure pedestal height and expose it via CSS var for precise rail docking.
   const pedestalRef = useRef(null);
@@ -68,30 +76,28 @@ export const MagitekChassis = ({ background = null, children, foreground = null 
 
   useEffect(() => {
     if (!navigationEnabled) return;
+    const el = crownRef.current;
+    if (!el || typeof ResizeObserver === 'undefined') return;
 
-    const computeHud = () => {
-      const vw = typeof window !== 'undefined' ? window.innerWidth : 390;
-      const targetWidth = Math.min(760, Math.max(320, vw - 24));
-      setHudScale(targetWidth / HUD_NATURAL.width);
-    };
+    const ro = new ResizeObserver(() => {
+      const h = el.getBoundingClientRect().height;
+      if (Number.isFinite(h) && h > 0) setHudHeightPx(Math.round(h));
+    });
+    ro.observe(el);
 
-    computeHud();
-    window.addEventListener('resize', computeHud);
-    return () => window.removeEventListener('resize', computeHud);
-  }, [navigationEnabled, HUD_NATURAL.width]);
+    const h0 = el.getBoundingClientRect().height;
+    if (Number.isFinite(h0) && h0 > 0) setHudHeightPx(Math.round(h0));
 
-  const avatarSizePx = 92; // matches AvatarSection hudVariant
-  const hudHeightPx = Math.round(HUD_NATURAL.height * hudScale);
-  const hudHoleCenterXPx = HUD_NATURAL.holeCenterX * hudScale;
-  const hudHoleCenterYPx = HUD_NATURAL.holeCenterY * hudScale;
-  const avatarOffsetLeftPx = Math.round(hudHoleCenterXPx - avatarSizePx / 2);
-  const avatarOffsetTopPx = Math.round(hudHoleCenterYPx - avatarSizePx / 2);
+    return () => ro.disconnect();
+  }, [navigationEnabled]);
 
-  useEffect(() => {
-    // Expose HUD height for consistent rail docking and scroll spacing
-    if (!navigationEnabled) return;
-    // no-op: computed values derived from state
-  }, [navigationEnabled, hudHeightPx]);
+  const predictedHudHeightPx = useMemo(() => {
+    const vw = typeof window !== 'undefined' ? window.innerWidth : 390;
+    const hudWidth = Math.min(1100, Math.max(320, vw - 24));
+    return Math.round((hudWidth * HUD_NATURAL.height) / HUD_NATURAL.width);
+  }, [HUD_NATURAL.height, HUD_NATURAL.width]);
+
+  const resolvedHudHeightPx = hudHeightPx || predictedHudHeightPx;
 
   useEffect(() => {
     if (!navigationEnabled) return;
@@ -134,7 +140,7 @@ export const MagitekChassis = ({ background = null, children, foreground = null 
       className={styles.chassis}
       style={{
         '--magitek-pedestal-h': navigationEnabled ? `${pedestalHeightPx}px` : '0px',
-        '--magitek-hud-h': navigationEnabled ? `${hudHeightPx}px` : '0px',
+        '--magitek-hud-h': navigationEnabled ? `${resolvedHudHeightPx}px` : '0px',
       }}
     >
       {/* Background Layer - Ambient effects, decorative elements */}
@@ -161,28 +167,25 @@ export const MagitekChassis = ({ background = null, children, foreground = null 
           {/* V6 Crown (hud-top-bar.png) - must not be obscured by nav layers */}
           {navigationEnabled && (
             <div className={styles.crownRoot} aria-label="magitek-crown">
-              {/* Avatar positioned BEHIND the HUD image (through the observation window) */}
-              <div
-                className={styles.crownAvatarBehind}
-                style={{
-                  left: `calc(12px + ${avatarOffsetLeftPx}px)`,
-                  top: `calc(env(safe-area-inset-top) + ${avatarOffsetTopPx}px)`,
-                }}
-              >
-                <AvatarSection variant="hud" />
-              </div>
+              <div className={styles.crownFrame} ref={crownRef} aria-hidden="false">
+                {/* Avatar positioned BEHIND the HUD image (through the observation window) */}
+                <div className={styles.crownAvatarBehind}>
+                  <AvatarSection variant="hud" />
+                </div>
 
-              <img
-                className={styles.crownBarImage}
-                src={hudTopBar}
-                alt=""
-                aria-hidden="true"
-                style={{
-                  width: HUD_NATURAL.width,
-                  height: HUD_NATURAL.height,
-                  transform: `scale(${hudScale})`,
-                }}
-              />
+                {/* Notification hub (HUD bell) */}
+                <button
+                  type="button"
+                  className={styles.crownNotificationButton}
+                  aria-label="通知中心"
+                  title="通知中心"
+                  onClick={() => openModal('notifications')}
+                >
+                  <img className={styles.crownNotificationIcon} src={hudBell} alt="" aria-hidden="true" />
+                </button>
+
+                <img className={styles.crownBarImage} src={hudTopBar} alt="" aria-hidden="true" />
+              </div>
             </div>
           )}
 
@@ -313,6 +316,9 @@ export const MagitekChassis = ({ background = null, children, foreground = null 
             {/* Modals will be rendered here by modal components */}
           </div>
         )}
+
+        {/* Global Settings/Notifications modals (available on every route) */}
+        <SettingsModals />
       </div>
     </div>
   );
