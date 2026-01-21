@@ -7,6 +7,7 @@ import { MagitekDropdown } from '../ui/MagitekDropdown';
 import { getCityNameEn, getDistrictNameEn, getDistrictsByCity, isValidDistrict } from '../../utils/taiwanDistricts';
 import { PROFESSION_REVERSE_MAP } from '../../utils/professionMaps';
 import styles from '../../styles/modules/UserFormSection.module.css';
+import buttonStyles from '../../styles/modules/MagitekButton.module.css';
 
 /**
  * User Form Section Component
@@ -581,13 +582,15 @@ export const UserFormSection = () => {
           </div>
         )}
 
-        <button
-          type="submit"
-          className={styles.submitButton}
-          disabled={isSaving}
-        >
-          {isSaving ? '儲存中...' : '儲存變更'}
-        </button>
+        <div className={styles.submitButtonRow}>
+          <button
+            type="submit"
+            className={buttonStyles.primaryButton}
+            disabled={isSaving}
+          >
+            {isSaving ? '儲存中...' : '儲存變更'}
+          </button>
+        </div>
       </form>
     </div>
   );

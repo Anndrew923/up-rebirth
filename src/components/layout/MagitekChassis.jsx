@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useUIStore } from '../../stores/uiStore';
 import { useUserStore } from '../../stores/userStore';
 import styles from '../../styles/modules/MagitekChassis.module.css';
@@ -37,12 +37,22 @@ export const MagitekChassis = ({ background = null, children, foreground = null 
   // V6 Spec: Bottom pedestal + side rails are the ONLY navigation entry points (authenticated surface only).
   const navigationEnabled = Boolean(isAuthenticated);
 
+  // Neon Scalpel (Diagnostic): enable only when ?debugDock=1
+  const debugDocking = useMemo(() => {
+    try {
+      const params = new URLSearchParams(window.location.search || '');
+      return params.get('debugDock') === '1';
+    } catch {
+      return false;
+    }
+  }, []);
+
   const goHash = useCallback((hash) => {
     window.location.hash = hash;
   }, []);
 
   return (
-    <div className={styles.chassis}>
+    <div className={`${styles.chassis} ${debugDocking ? styles.debugDocking : ''}`}>
       {/* Background Layer - Ambient effects, decorative elements */}
       <div id="layer-master-bg" className={styles.backgroundLayer}>
         <img className={styles.masterBgImg} src={masterNebula} alt="" aria-hidden="true" />
@@ -54,6 +64,7 @@ export const MagitekChassis = ({ background = null, children, foreground = null 
         <div className={styles.scrollInnerView}>
           <div className={styles.scrollContent}>
             {children}
+            <div className={styles.pageFooterSpacer} aria-hidden="true" />
           </div>
         </div>
       </div>
@@ -64,6 +75,9 @@ export const MagitekChassis = ({ background = null, children, foreground = null 
       >
         {/* Top Layer: HUD Mask & Exoskeleton Frame */}
         <div id="layer-hud-mask" className={styles.hudMaskLayer}>
+          {/* Glass blur sublayer (must stay BELOW metal frames) */}
+          {navigationEnabled && <div className={styles.blurSublayerTop} aria-hidden="true" />}
+
           {/* V6 Crown (hud-top-bar.png) - must not be obscured by nav layers */}
           {navigationEnabled && (
             <div className={styles.crownRoot} aria-label="magitek-crown">
@@ -170,6 +184,8 @@ export const MagitekChassis = ({ background = null, children, foreground = null 
           {/* Structural Closure: Bottom Pedestal */}
           {navigationEnabled && (
             <div className={styles.pedestalWrapper}>
+              <div className={styles.pedestalOcclusion} aria-hidden="true" />
+              <div className={styles.blurSublayerBottom} aria-hidden="true" />
               <img className={styles.pedestalImg} src={bottomPedestal} alt="" aria-hidden="true" />
 
               {/* Trinity Entry Slots (placeholders) */}
