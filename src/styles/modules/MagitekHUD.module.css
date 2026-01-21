@@ -1,0 +1,173 @@
+/* ============================================
+   Magitek HUD (SSOT)
+   Commander Identity Module - Single Focus Layout
+   ============================================ */
+
+.centerScreen {
+  position: absolute;
+  z-index: 4; /* above HUD image (3) */
+  pointer-events: none;
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+
+  /* Absolute Centering (Binary Elimination: lock geometry) */
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%); /* 完美幾何中心 */
+
+  /* SSOT-ish display width: tunable but bounded */
+  --hud-display-width: clamp(240px, calc(var(--magitek-hud-w, 1100px) * 0.52), 640px);
+  width: var(--hud-display-width);
+  height: 40%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 1rem; /* never touch the metal bezel */
+}
+
+.debugDocking {
+  /* Marker class for module-local debugging (no styles by default) */
+}
+
+.identitySlot {
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+
+  /* Safety Reset (Total CSS Wipe) */
+  padding: 0;
+  background: none !important;
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  mask-image: none !important;
+  -webkit-mask-image: none !important;
+}
+
+/* Total Transparency Protocol:
+   - Disable scanline overlay (visual liability until pixel-perfect)
+   - Nuke ALL pseudo-element backgrounds/shadows */
+.identitySlot::before,
+.identitySlot::after {
+  content: none;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.identityViewport {
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  height: 100%;
+  padding: 0 clamp(8px, 1vw, 12px);
+  position: relative;
+  z-index: 1;
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+
+  /* Vertical breathing room: 25% above/below */
+  display: grid;
+  grid-template-rows: minmax(25%, 1fr) auto minmax(25%, 1fr);
+}
+
+.identityViewportMasked {
+  /* Surgical Decontamination: temporarily disable mask-image to locate ghost culprit */
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+}
+
+.identityLine {
+  grid-row: 2;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+  transform: translateX(0);
+  white-space: nowrap;
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.identityLineBreath {
+  justify-self: center;
+  animation: hudIdentityBreath 3.4s ease-in-out infinite;
+}
+
+.identityLineScroll {
+  justify-self: start;
+  will-change: transform;
+  animation: hudIdentityScroll var(--identity-marquee-duration, 10s) linear infinite alternate;
+}
+
+.identityPrefix {
+  /* Magenta/Pink neon small */
+  font-size: 0.78em;
+  font-weight: 300;
+  letter-spacing: 0.9px;
+  color: rgba(255, 0, 255, 0.92);
+  text-shadow:
+    0 0 8px rgba(255, 0, 255, 0.42),
+    0 0 18px rgba(255, 0, 255, 0.24),
+    0 0 28px rgba(255, 0, 255, 0.12);
+}
+
+.identityName {
+  /* Cyan/White neon large */
+  font-size: 1.08em;
+  font-weight: 300;
+  letter-spacing: 1.5px;
+  color: rgba(240, 252, 255, 0.94);
+  text-shadow:
+    0 0 10px rgba(0, 191, 255, 0.50),
+    0 0 22px rgba(0, 191, 255, 0.26),
+    0 0 40px rgba(0, 191, 255, 0.12);
+}
+
+@keyframes hudIdentityScroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-1 * var(--identity-marquee-shift, 0px)));
+  }
+}
+
+@keyframes hudIdentityBreath {
+  0% {
+    filter: drop-shadow(0 0 0 rgba(0, 191, 255, 0));
+    opacity: 0.92;
+  }
+  50% {
+    filter: drop-shadow(0 0 10px rgba(0, 191, 255, 0.22));
+    opacity: 1;
+  }
+  100% {
+    filter: drop-shadow(0 0 0 rgba(0, 191, 255, 0));
+    opacity: 0.92;
+  }
+}
+
+/* Neon Scalpel support: visualize Identity bounds */
+.debugDocking .centerScreen {
+  outline: 2px dashed rgba(255, 255, 0, 0.85);
+  outline-offset: -2px;
+}
+
+.debugDocking .identitySlot {
+  outline: 1px solid rgba(0, 255, 255, 0.8);
+  outline-offset: -1px;
+}

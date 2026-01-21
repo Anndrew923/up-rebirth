@@ -55,6 +55,9 @@
       "artist_performer": "Arts/Performance",
       "other": "Other"
     }
+  },
+  "ui": {
+    "level_prefix": "Lv."
   }
 }
 

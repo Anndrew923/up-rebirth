@@ -4,10 +4,10 @@ import { useUIStore } from '../../stores/uiStore';
 import { sanitizeInput } from '../../utils/validation';
 import { getCurrentLanguage, t } from '../../i18n';
 import { MagitekDropdown } from '../ui/MagitekDropdown';
+import { MagitekButton } from '../ui/MagitekButton';
 import { getCityNameEn, getDistrictNameEn, getDistrictsByCity, isValidDistrict } from '../../utils/taiwanDistricts';
 import { PROFESSION_REVERSE_MAP } from '../../utils/professionMaps';
 import styles from '../../styles/modules/UserFormSection.module.css';
-import buttonStyles from '../../styles/modules/MagitekButton.module.css';
 
 /**
  * User Form Section Component
@@ -583,13 +583,9 @@ export const UserFormSection = () => {
         )}
 
         <div className={styles.submitButtonRow}>
-          <button
-            type="submit"
-            className={buttonStyles.primaryButton}
-            disabled={isSaving}
-          >
+          <MagitekButton type="submit" variant="primary" disabled={isSaving}>
             {isSaving ? '儲存中...' : '儲存變更'}
-          </button>
+          </MagitekButton>
         </div>
       </form>
     </div>

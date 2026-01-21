@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useUIStore } from '../../stores/uiStore';
+import { t } from '../../i18n';
 import styles from '../../styles/modules/SettingsModals.module.css';
+import { MagitekButton } from '../ui/MagitekButton';
 
 /**
  * Settings Modals Component
@@ -91,18 +93,22 @@ export const SettingsModals = () => {
               </div>
             </div>
             <div className={styles.modalFooter}>
-              <button
-                className={styles.cancelButton}
+              <MagitekButton
+                variant="ghost"
+                size="small"
+                className={styles.footerButton}
                 onClick={() => closeModal('privacy')}
               >
-                取消
-              </button>
-              <button
-                className={styles.saveButton}
+                {t('common.cancel', '取消')}
+              </MagitekButton>
+              <MagitekButton
+                variant="primary"
+                size="small"
+                className={styles.footerButton}
                 onClick={handleSaveSettings}
               >
-                儲存
-              </button>
+                {t('common.save', '儲存')}
+              </MagitekButton>
             </div>
           </div>
         </div>
@@ -113,7 +119,7 @@ export const SettingsModals = () => {
         <div className={styles.modalOverlay} onClick={() => closeModal('notifications')}>
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <div className={styles.modalHeader}>
-              <h3 className={styles.modalTitle}>通知設定</h3>
+              <h3 className={styles.modalTitle}>{t('settings.notifications.title', '通知設定')}</h3>
               <button
                 className={styles.closeButton}
                 onClick={() => closeModal('notifications')}
@@ -158,18 +164,22 @@ export const SettingsModals = () => {
               </div>
             </div>
             <div className={styles.modalFooter}>
-              <button
-                className={styles.cancelButton}
+              <MagitekButton
+                variant="ghost"
+                size="small"
+                className={styles.footerButton}
                 onClick={() => closeModal('notifications')}
               >
-                取消
-              </button>
-              <button
-                className={styles.saveButton}
+                {t('common.cancel', '取消')}
+              </MagitekButton>
+              <MagitekButton
+                variant="primary"
+                size="small"
+                className={styles.footerButton}
                 onClick={handleSaveSettings}
               >
-                儲存
-              </button>
+                {t('common.save', '儲存')}
+              </MagitekButton>
             </div>
           </div>
         </div>

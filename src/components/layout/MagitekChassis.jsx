@@ -2,6 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { useUIStore } from '../../stores/uiStore';
 import { useUserStore } from '../../stores/userStore';
 import styles from '../../styles/modules/MagitekChassis.module.css';
+import hudStyles from '../../styles/modules/MagitekHUD.module.css';
 import bottomPedestal from '../../assets/images/magitek/bottom_pedestal.png';
 import hudTopBar from '../../assets/images/magitek/hud-top-bar.png';
 import hudBell from '../../assets/images/magitek/hud-bell.svg';
@@ -11,6 +12,7 @@ import railMid from '../../assets/images/magitek/rail-mid.png';
 import railBottom from '../../assets/images/magitek/rail-bottom.png';
 import { AvatarSection } from '../UserInfo/AvatarSection';
 import { SettingsModals } from '../UserInfo/SettingsModals';
+import { MagitekHUD } from './MagitekHUD';
 
 /**
  * Magitek Resonance 2.0 Chassis
@@ -33,6 +35,37 @@ export const MagitekChassis = ({ background = null, children, foreground = null 
   const openModal = useUIStore((state) => state.openModal);
 
   const isAuthenticated = useUserStore((state) => state.isAuthenticated);
+  const stats = useUserStore((state) => state.stats);
+  const userProfile = useUserStore((state) => state.userProfile);
+
+  const user = useMemo(() => {
+    const ladderScore = Number(stats?.ladderScore);
+    const combatPowerFromLadder =
+      Number.isFinite(ladderScore) && ladderScore > 0 ? Math.round(ladderScore) : null;
+
+    const scores = stats?.scores && typeof stats.scores === 'object' ? stats.scores : null;
+    const scoreKeys = ['strength', 'explosivePower', 'cardio', 'muscleMass', 'bodyFat'];
+    const scoreValues = scores
+      ? scoreKeys
+          .map((k) => Number(scores[k]))
+          .filter((n) => Number.isFinite(n) && n > 0)
+      : [];
+    const combatPowerFromScores =
+      scoreValues.length > 0
+        ? Math.round(scoreValues.reduce((a, b) => a + b, 0) / scoreValues.length)
+        : null;
+
+    const combatPower = combatPowerFromLadder ?? combatPowerFromScores ?? 0;
+
+    const nickname =
+      stats?.nickname ||
+      stats?.displayName ||
+      userProfile?.displayName ||
+      userProfile?.email?.split?.('@')?.[0] ||
+      'UserNickname';
+
+    return { combatPower, nickname };
+  }, [stats?.ladderScore, stats?.scores, stats?.nickname, stats?.displayName, userProfile?.displayName, userProfile?.email]);
 
   // V6 Spec: Bottom pedestal + side rails are the ONLY navigation entry points (authenticated surface only).
   const navigationEnabled = Boolean(isAuthenticated);
@@ -47,12 +80,26 @@ export const MagitekChassis = ({ background = null, children, foreground = null 
     }
   }, []);
 
+  // Ghost Exorcism Protocol: enable only when ?ghostFrame=1
+  const ghostFrameTest = useMemo(() => {
+    try {
+      const params = new URLSearchParams(window.location.search || '');
+      return params.get('ghostFrame') === '1';
+    } catch {
+      return false;
+    }
+  }, []);
+
   const goHash = useCallback((hash) => {
     window.location.hash = hash;
   }, []);
 
   return (
-    <div className={`${styles.chassis} ${debugDocking ? styles.debugDocking : ''}`}>
+    <div
+      className={`${styles.chassis} ${debugDocking ? styles.debugDocking : ''} ${
+        debugDocking ? hudStyles.debugDocking : ''
+      } ${ghostFrameTest ? styles.ghostFrameTest : ''}`}
+    >
       {/* Background Layer - Ambient effects, decorative elements */}
       <div id="layer-master-bg" className={styles.backgroundLayer}>
         <img className={styles.masterBgImg} src={masterNebula} alt="" aria-hidden="true" />
@@ -97,6 +144,9 @@ export const MagitekChassis = ({ background = null, children, foreground = null 
                 >
                   <img className={styles.crownNotificationIcon} src={hudBell} alt="" aria-hidden="true" />
                 </button>
+
+                {/* Commander Identity Module (Single-Focus Layout) */}
+                <MagitekHUD user={user} />
 
                 <img className={styles.crownBarImage} src={hudTopBar} alt="" aria-hidden="true" />
               </div>

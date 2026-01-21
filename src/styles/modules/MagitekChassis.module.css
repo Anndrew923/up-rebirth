@@ -10,6 +10,7 @@
 :global(:root) {
   --magitek-cyan: #00BFFF;
   --magitek-cyan-glow: rgba(0, 191, 255, 0.55);
+  --magitek-cyan-dim: rgba(0, 191, 255, 0.35);
   --magitek-glass-bg: rgba(0, 0, 0, 0.45);
   --magitek-border-glow: rgba(0, 191, 255, 0.3);
   --magitek-focus-glow: rgba(0, 191, 255, 0.7);
@@ -406,6 +407,11 @@
   user-select: none;
 }
 
+/* Ghost Exorcism Protocol: binary elimination (asset vs CSS) */
+.ghostFrameTest .crownBarImage {
+  opacity: 0;
+}
+
 .crownAvatarBehind,
 .avatarPortal {
   position: absolute;
@@ -492,7 +498,7 @@
     0 0 44px rgba(0, 191, 255, 0.28);
 }
 
-.crownNotificationIcon {
+ .crownNotificationIcon {
   width: 92%;
   height: 92%;
   position: relative;

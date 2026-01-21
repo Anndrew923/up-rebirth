@@ -1,4 +1,13 @@
 {
+  "common": {
+    "save": "儲存",
+    "cancel": "取消"
+  },
+  "settings": {
+    "notifications": {
+      "title": "通知設定"
+    }
+  },
   "profile": {
     "form": {
       "nicknamePlaceholder": "您的暱稱",
@@ -55,6 +64,9 @@
       "artist_performer": "藝術/表演",
       "other": "其他"
     }
+  },
+  "ui": {
+    "level_prefix": "Lv."
   }
 }
 

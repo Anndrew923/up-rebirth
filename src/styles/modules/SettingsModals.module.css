@@ -9,34 +9,88 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background: radial-gradient(120% 120% at 50% 20%, rgba(0, 0, 0, 0.62), rgba(0, 0, 0, 0.78) 55%, rgba(0, 0, 0, 0.88));
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2000;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  z-index: 4000;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .modal {
-  background-color: white;
+  position: relative;
+  background: rgba(20, 20, 25, 0.85);
+  color: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--magitek-cyan-dim);
   border-radius: var(--border-radius-lg);
   max-width: 500px;
   width: 90%;
   max-height: 90vh;
-  overflow-y: auto;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  animation: slideIn 0.3s ease-out;
+  display: flex;
+  flex-direction: column;
+  overflow: visible; /* allow button glow to breathe */
+  box-shadow:
+    0 0 0 1px rgba(0, 191, 255, 0.12),
+    0 0 22px rgba(0, 191, 255, 0.18),
+    0 0 46px rgba(255, 0, 255, 0.10),
+    0 18px 70px rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  animation: magitekScanIn 0.26s ease-out both;
 }
 
-@keyframes slideIn {
+/* Corner accents + scan line */
+.modal::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(18px 18px at 14px 14px, rgba(0, 191, 255, 0.95), transparent 65%),
+    radial-gradient(18px 18px at calc(100% - 14px) 14px, rgba(255, 0, 255, 0.85), transparent 65%),
+    radial-gradient(18px 18px at 14px calc(100% - 14px), rgba(255, 0, 255, 0.55), transparent 65%),
+    radial-gradient(18px 18px at calc(100% - 14px) calc(100% - 14px), rgba(0, 191, 255, 0.75), transparent 65%);
+  opacity: 0.85;
+  filter: drop-shadow(0 0 10px rgba(0, 191, 255, 0.25));
+}
+
+.modal::after {
+  content: '';
+  position: absolute;
+  left: -20%;
+  width: 140%;
+  top: -24px;
+  height: 2px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(0, 191, 255, 0.95), transparent);
+  box-shadow: 0 0 14px rgba(0, 191, 255, 0.55);
+  animation: magitekScanLine 0.72s ease-out both;
+}
+
+@keyframes magitekScanIn {
   from {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(10px) scale(0.985);
   }
   to {
     opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes magitekScanLine {
+  0% {
     transform: translateY(0);
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(calc(100% + 48px));
+    opacity: 0;
   }
 }
 
@@ -45,14 +99,18 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--spacing-lg);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(0, 191, 255, 0.18);
+  flex-shrink: 0;
 }
 
 .modalTitle {
   font-size: var(--font-size-lg);
   font-weight: 600;
-  color: var(--color-primary);
+  color: rgba(255, 255, 255, 0.95);
   margin: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+    'Courier New', 'Roboto Mono', monospace;
+  text-shadow: 0 0 5px var(--magitek-cyan);
 }
 
 .closeButton {
@@ -60,23 +118,27 @@
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
-  color: var(--color-secondary);
+  color: rgba(255, 255, 255, 0.68);
   padding: var(--spacing-xs);
   line-height: 1;
   transition: color 0.2s ease;
 }
 
 .closeButton:hover {
-  color: var(--color-primary);
+  color: rgba(255, 255, 255, 0.95);
 }
 
 .modalContent {
   padding: var(--spacing-lg);
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: visible;
 }
 
 .settingItem {
   padding: var(--spacing-md) 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid rgba(0, 191, 255, 0.08);
 }
 
 .settingItem:last-child {
@@ -89,58 +151,81 @@
   gap: var(--spacing-sm);
   cursor: pointer;
   font-size: var(--font-size-base);
-  color: var(--color-primary);
+  color: rgba(255, 255, 255, 0.92);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+    'Courier New', 'Roboto Mono', monospace;
+  text-shadow: 0 0 5px rgba(0, 191, 255, 0.28);
 }
 
 .checkbox {
-  width: 20px;
-  height: 20px;
+  appearance: none;
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: 1px solid var(--magitek-cyan-dim);
+  background: rgba(0, 0, 0, 0.35);
+  display: grid;
+  place-items: center;
   cursor: pointer;
-  accent-color: var(--color-primary);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, transform 0.12s ease;
+}
+
+.checkbox::after {
+  content: '';
+  width: 14px;
+  height: 14px;
+  background: var(--magitek-cyan);
+  opacity: 0;
+  transform: scale(0.85);
+  transition: opacity 0.18s ease, transform 0.18s ease, filter 0.18s ease;
+  /* Custom SVG check symbol (mask) */
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='black' d='M7.7 13.6 3.9 9.8 2.5 11.2l5.2 5.2L17.6 6.5 16.2 5.1z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='black' d='M7.7 13.6 3.9 9.8 2.5 11.2l5.2 5.2L17.6 6.5 16.2 5.1z'/%3E%3C/svg%3E");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+.checkbox:checked {
+  border-color: var(--magitek-cyan);
+  box-shadow:
+    0 0 0 2px rgba(0, 191, 255, 0.14),
+    0 0 14px rgba(0, 191, 255, 0.35);
+  background: rgba(0, 191, 255, 0.08);
+}
+
+.checkbox:checked::after {
+  opacity: 1;
+  transform: scale(1);
+  filter: drop-shadow(0 0 6px rgba(0, 191, 255, 0.65));
+}
+
+.checkbox:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px rgba(0, 191, 255, 0.18),
+    0 0 18px rgba(0, 191, 255, 0.40);
 }
 
 .modalFooter {
   display: flex;
-  justify-content: flex-end;
-  gap: var(--spacing-md);
-  padding: var(--spacing-lg);
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  justify-content: space-between;
+  gap: 1rem;
+  width: min(85%, 420px);
+  margin-left: auto;
+  margin-right: auto;
+  padding: var(--spacing-lg) calc(var(--spacing-lg) + 0.75rem);
+  border-top: 1px solid rgba(0, 191, 255, 0.14);
+  overflow: visible;
+  flex-shrink: 0;
 }
 
-.cancelButton,
-.saveButton {
-  padding: var(--spacing-sm) var(--spacing-lg);
-  border: none;
-  border-radius: var(--border-radius-md);
-  font-size: var(--font-size-base);
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.1s ease;
-}
-
-.cancelButton {
-  background-color: #e9ecef;
-  color: var(--color-secondary);
-}
-
-.cancelButton:hover {
-  background-color: #dee2e6;
-  transform: translateY(-1px);
-}
-
-.saveButton {
-  background-color: var(--color-primary);
-  color: white;
-}
-
-.saveButton:hover {
-  background-color: #0056b3;
-  transform: translateY(-1px);
-}
-
-.saveButton:active,
-.cancelButton:active {
-  transform: translateY(0);
+.footerButton {
+  flex: 1 1 0;
 }
 
 /* Responsive */
