@@ -10,26 +10,29 @@
      Production Alignment Guard (V6 Hardware Lock)
      ========================================================= */
 
-  /* Dynamic viewport height (prevents mobile URL-bar drift) */
-  --magitek-viewport-h: 100vh;
+  /* Dynamic viewport height (prevents mobile URL-bar drift)
+     Degrade protocol: default to 100% baseline; opt-in dvh where supported. */
+  --magitek-viewport-h: 100%;
 
-  /* Safe area baselines (EXTREMELY conservative defaults) */
-  --magitek-safe-top: 44px;
-  --magitek-safe-bottom: 34px;
+  /* Safe area baselines (解除硬化補償：PC=0，手機才生效)
+     Default to 0 so desktop/local never shifts. */
+  --magitek-safe-top: 0px;
+  --magitek-safe-bottom: 0px;
 
   /* Ghost Exorcism overlap */
   --magitek-overlap: 2px;
   --magitek-overlap-neg: calc(-1 * var(--magitek-overlap));
 
   /* Asset ratios (intrinsic) */
-  --magitek-hud-asset-w: 1710;
-  --magitek-hud-asset-h: 534;
+  /* Unit-conversion guard: always carry px units (anti-minify edge cases) */
+  --magitek-hud-asset-w: calc(1710 * 1px);
+  --magitek-hud-asset-h: calc(534 * 1px);
   /* Hard-coded (do NOT depend on runtime image dimensions) */
   --magitek-hud-frame-ratio: 0.3122807018;
   --magitek-hud-frame-ratio-pct: 31.228%;
 
-  --magitek-pedestal-asset-w: 1284;
-  --magitek-pedestal-asset-h: 429;
+  --magitek-pedestal-asset-w: calc(1284 * 1px);
+  --magitek-pedestal-asset-h: calc(429 * 1px);
   /* Hard-coded (do NOT depend on runtime image dimensions) */
   --magitek-pedestal-ratio: 0.3341121495;
 
@@ -85,11 +88,13 @@
   }
 }
 
+/* Environment variable downgrade protocol:
+   If dvh is problematic locally, 100% baseline + html/body/root height=100% (see index.css) keeps SSOT stable. */
 @supports (padding: env(safe-area-inset-top)) {
   :global(:root) {
-    /* Guard against env() returning 0 in production */
-    --magitek-safe-top: max(env(safe-area-inset-top), 44px);
-    --magitek-safe-bottom: max(env(safe-area-inset-bottom), 34px);
+    /* Use clamp so desktop stays at 0; mobile notch gets real inset (capped). */
+    --magitek-safe-top: clamp(0px, env(safe-area-inset-top, 0px), 44px);
+    --magitek-safe-bottom: clamp(0px, env(safe-area-inset-bottom, 0px), 34px);
   }
 }
 

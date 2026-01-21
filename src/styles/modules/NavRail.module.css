@@ -15,7 +15,7 @@
 .navRail {
   position: fixed;
   /* Structural growth: rail starts at the exoskeleton's deep mount line */
-  top: calc(var(--hud-seal-point) - var(--hud-visual-overlap) + var(--magitek-overlap-neg));
+  top: var(--hud-seal-point);
   bottom: calc(var(--magitek-pedestal-h, 0px) - var(--magitek-rail-pedestal-overlap));
   width: var(--magitek-rail-width);
   display: flex;
