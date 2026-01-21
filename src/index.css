@@ -1,5 +1,3 @@
-@import "./styles/MagitekTokens.css";
-
 :root {
   /* Design Tokens - Colors */
   --color-primary: #007bff;
@@ -48,4 +46,8 @@ body {
 #root {
   width: 100%;
   min-height: 100vh;
+  /* Positioning Stability: prevent fixed elements from being "captured" by transforms */
+  transform: none;
+  filter: none;
+  perspective: none;
 }

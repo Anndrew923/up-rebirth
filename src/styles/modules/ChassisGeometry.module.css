@@ -7,7 +7,8 @@
 
 :global(:root) {
   /* Safe area baselines */
-  --magitek-safe-top: env(safe-area-inset-top, 0px);
+  /* Fallbacks are mandatory for engines that don't support env() */
+  --magitek-safe-top: env(safe-area-inset-top, 20px);
   --magitek-safe-bottom: env(safe-area-inset-bottom, 0px);
 
   /* Ghost Exorcism overlap */
