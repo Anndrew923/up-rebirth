@@ -161,7 +161,11 @@ export const MagitekChassis = ({ background = null, children, foreground = null 
           )}
 
           {/* Page HUD / exoskeleton slot (must manage pointer-events itself) */}
-          {foreground}
+          {foreground ? (
+            <div className={styles.exoskeleton} aria-label="magitek-exoskeleton">
+              {foreground}
+            </div>
+          ) : null}
 
           {/* Structural Closure: Bottom Pedestal */}
           {navigationEnabled && (

@@ -31,10 +31,17 @@
   /* JS-free geometry: derive HUD/pedestal heights from intrinsic asset ratios */
   /* SSOT: HUD width drives its intrinsic height */
   --hud-width: clamp(320px, calc(100vw - 24px), 1100px);
+  /* HUD physical boundary (rendered height) SSOT: must match .crownFrame::before */
+  --hud-render-height: calc(var(--hud-width) * (534 / 1710));
+  /* Mobile seal point: HUD bottom edge including safe-area inset */
+  --hud-seal-point: calc(env(safe-area-inset-top) + var(--hud-render-height));
+  /* Deep embed: exoskeleton overlaps into HUD territory */
+  --hud-overlap-ratio: 0.33; /* 1/3 of HUD height */
+  --hud-visual-overlap: calc(var(--hud-render-height) * var(--hud-overlap-ratio));
   /* Retire `aspect-ratio` for cross-device stability: use a physical spacer ratio. */
   --hud-frame-ratio: 0.31228; /* 534 / 1710 */
   --hud-frame-ratio-pct: 31.228%; /* (534 / 1710) * 100% */
-  --hud-height: calc(var(--hud-width) * var(--hud-frame-ratio));
+  --hud-height: var(--hud-render-height);
 
   /* SSOT: Pedestal width drives its intrinsic height */
   --pedestal-width: min(1284px, 100vw);
@@ -162,7 +169,8 @@
   width: 100%;
   min-height: 100%;
   /* 80/10/10 push: keep content reachable in the visible zone */
-  padding-top: calc(var(--hud-width) * var(--hud-frame-ratio, 0.31228) + 2vh);
+  /* Content-only avoidance: keep main content below HUD solid area (incl. safe-area) */
+  padding-top: calc(var(--hud-seal-point) + 2vh);
   padding-bottom: calc(var(--pedestal-height) + 15vh);
 
   /* “Kiss the rails” on any screen */
@@ -231,6 +239,29 @@
   height: auto; /* height liberation: let children self-size */
   padding: 0; /* required: zero padding/margin for fixed HUD surface */
   margin: 0;
+}
+
+/* ============================================
+  Exoskeleton Dock (V6.2)
+  - Physically docks below HUD bottom edge (no safe-area double counting)
+  ============================================ */
+.exoskeleton {
+  position: absolute;
+  /* Pull up by the overlap amount */
+  top: calc(var(--hud-seal-point) - var(--hud-visual-overlap));
+  left: 0;
+  width: 100%;
+  /* Compensate height to keep it filling the screen */
+  height: calc(100% - (var(--hud-seal-point) - var(--hud-visual-overlap)));
+  /* NOTE: No padding here — structure must "grow" into overlap zone. */
+  /* 向上微調產生重疊，避免亞像素漏光 */
+  margin-top: -2px;
+  pointer-events: none;
+  z-index: 35;
+}
+
+.exoskeleton > * {
+  pointer-events: auto;
 }
 
 /* ============================================
@@ -405,7 +436,8 @@
 
 .navRail {
   position: fixed;
-  top: calc(env(safe-area-inset-top) + var(--magitek-hud-h, 0px) + 4px);
+  /* Structural growth: rail starts at the exoskeleton's deep mount line */
+  top: calc(var(--hud-seal-point) - var(--hud-visual-overlap));
   bottom: calc(var(--magitek-pedestal-h, 0px) - 8px);
   width: var(--magitek-rail-width);
   display: flex;
@@ -490,27 +522,27 @@
 /* Node placements (V6 baseline) */
 .nodeTime {
   left: calc(8px + (var(--magitek-rail-width) / 2) - 23px);
-  top: calc(env(safe-area-inset-top) + var(--magitek-hud-h, 0px) + 72px);
+  top: calc(var(--hud-seal-point) + 72px);
 }
 
 .nodeSoul {
   left: calc(8px + (var(--magitek-rail-width) / 2) - 23px);
-  top: calc(env(safe-area-inset-top) + var(--magitek-hud-h, 0px) + 170px);
+  top: calc(var(--hud-seal-point) + 170px);
 }
 
 .nodeTools {
   right: calc(8px + (var(--magitek-rail-width) / 2) - 23px);
-  top: calc(env(safe-area-inset-top) + var(--magitek-hud-h, 0px) + 72px);
+  top: calc(var(--hud-seal-point) + 72px);
 }
 
 .nodeTuning {
   right: calc(8px + (var(--magitek-rail-width) / 2) - 23px);
-  top: calc(env(safe-area-inset-top) + var(--magitek-hud-h, 0px) + 170px);
+  top: calc(var(--hud-seal-point) + 170px);
 }
 
 .nodeHonor {
   right: calc(8px + (var(--magitek-rail-width) / 2) - 23px);
-  top: calc(env(safe-area-inset-top) + var(--magitek-hud-h, 0px) + 268px);
+  top: calc(var(--hud-seal-point) + 268px);
 }
 
 .pedestalWrapper {
