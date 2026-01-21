@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useRouteCleanup } from '../../hooks/useRouteCleanup';
 import { MagitekChassis } from '../layout/MagitekChassis';
 import { calculate1RM } from '../../utils/strengthCalculations';
+import { AssessmentEntrySection } from './AssessmentEntrySection';
 import styles from '../../styles/modules/EvaluationHub.module.css';
 
 /**
@@ -35,6 +36,8 @@ export default function EvaluationHub({ subPath = '' }) {
             onOpenStrength={() => goHash('#strength')}
             onOpenCardio={() => goHash('#cardio')}
             onOpenMuscle={() => goHash('#muscle')}
+            onOpenFFMI={() => goHash('#ffmi')}
+            onOpenExplosive={() => goHash('#explosive')}
           />
         )}
       </div>
@@ -48,6 +51,8 @@ function HubHome({
   onOpenStrength,
   onOpenCardio,
   onOpenMuscle,
+  onOpenFFMI,
+  onOpenExplosive,
 }) {
   return (
     <>
@@ -71,20 +76,13 @@ function HubHome({
         </button>
       </section>
 
-      <section className={styles.group}>
-        <div className={styles.groupTitle}>測試入口</div>
-        <div className={styles.row}>
-          <button type="button" className={styles.pill} onClick={onOpenStrength}>
-            💪 力量測試
-          </button>
-          <button type="button" className={styles.pill} onClick={onOpenCardio}>
-            🫀 心肺測試
-          </button>
-          <button type="button" className={styles.pill} onClick={onOpenMuscle}>
-            🧬 肌肉測試
-          </button>
-        </div>
-      </section>
+      <AssessmentEntrySection
+        onOpenStrength={onOpenStrength}
+        onOpenCardio={onOpenCardio}
+        onOpenMuscle={onOpenMuscle}
+        onOpenFFMI={onOpenFFMI}
+        onOpenExplosive={onOpenExplosive}
+      />
 
       <section className={styles.note}>
         <div className={styles.noteTitle}>提示</div>

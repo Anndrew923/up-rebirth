@@ -4,8 +4,8 @@ import EvaluationHub from './components/EvaluationHub/EvaluationHub';
 import StrengthPage from './components/Strength/StrengthPage';
 import CardioPage from './components/Assessment/Cardio/CardioPage';
 import MusclePage from './components/Assessment/Muscle/MusclePage';
-import FFMIPage from './components/Assessment/FFMI/FFMIPage';
-import PowerPage from './components/Assessment/Power/PowerPage';
+import FFMIAssessment from './components/Assessment/FFMIAssessment';
+import ExplosiveAssessment from './components/Assessment/ExplosiveAssessment';
 import HistoryPage from './components/History/HistoryPage';
 import Ladder from './components/Ladder/Ladder';
 import ToolsPage from './components/Tools/ToolsPage';
@@ -39,8 +39,11 @@ export const AppRoutes = () => {
       { key: 'strength', label: '💪 力量', Component: StrengthPage },
       { key: 'cardio', label: '🫀 心肺', Component: CardioPage },
       { key: 'muscle', label: '🧬 肌肉', Component: MusclePage },
-      { key: 'ffmi', label: '🧪 FFMI', Component: FFMIPage },
-      { key: 'power', label: '⚡ 爆發', Component: PowerPage },
+      { key: 'ffmi', label: '🧪 FFMI', Component: FFMIAssessment },
+      // Canonical explosive assessment route
+      { key: 'explosive', label: '⚡ 爆發', Component: ExplosiveAssessment },
+      // Backward-compatible alias (older links)
+      { key: 'power', label: '⚡ 爆發', Component: ExplosiveAssessment },
 
       // Side-rail destinations (V6)
       { key: 'history', label: '⏱️ 時光迴廊', Component: HistoryPage },

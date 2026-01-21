@@ -58,6 +58,10 @@
   },
   "ui": {
     "level_prefix": "Lv."
+  },
+  "assessment": {
+    "explosive": "Explosive power",
+    "ffmi": "FFMI"
   }
 }
 

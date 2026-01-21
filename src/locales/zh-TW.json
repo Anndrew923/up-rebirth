@@ -67,6 +67,10 @@
   },
   "ui": {
     "level_prefix": "Lv."
+  },
+  "assessment": {
+    "explosive": "爆發力測試",
+    "ffmi": "🧪 FFMI 測試"
   }
 }
 
