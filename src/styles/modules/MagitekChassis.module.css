@@ -10,7 +10,7 @@
 .chassis {
   position: relative;
   width: 100%;
-  min-height: 100vh;
+  min-height: var(--magitek-viewport-h, 100vh);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -84,7 +84,7 @@
   inset: 0;
   z-index: 2000; /* #layer-scroll-content */
   width: 100%;
-  height: 100vh;
+  height: var(--magitek-viewport-h, 100vh);
   overflow: hidden; /* scrolling happens in child container */
   pointer-events: auto;
   background: transparent;
@@ -114,8 +114,8 @@
     transparent calc(var(--hud-deep-mount-top) - var(--hud-mask-feather) + var(--hud-mask-shift, 0px)),
     rgba(255, 255, 255, 1) calc(var(--hud-seal-point) + (var(--hud-mask-feather) * 0.35) + var(--hud-mask-shift, 0px)),
     /* Bottom hard cutoff: fully occlude at pedestal metal edge */
-    rgba(255, 255, 255, 1) calc(100vh - var(--chassis-bottom-metal-height) - var(--pedestal-mask-feather) + 50px),
-    rgba(255, 255, 255, 0) calc(100vh - var(--chassis-bottom-metal-height) + 50px),
+    rgba(255, 255, 255, 1) calc(var(--magitek-viewport-h, 100vh) - var(--chassis-bottom-metal-height) - var(--pedestal-mask-feather) + 50px),
+    rgba(255, 255, 255, 0) calc(var(--magitek-viewport-h, 100vh) - var(--chassis-bottom-metal-height) + 50px),
     rgba(255, 255, 255, 0) 100%
   );
   mask-image: linear-gradient(
@@ -125,8 +125,8 @@
     transparent calc(var(--hud-deep-mount-top) - var(--hud-mask-feather) + var(--hud-mask-shift, 0px)),
     rgba(255, 255, 255, 1) calc(var(--hud-seal-point) + (var(--hud-mask-feather) * 0.35) + var(--hud-mask-shift, 0px)),
     /* Bottom hard cutoff: fully occlude at pedestal metal edge */
-    rgba(255, 255, 255, 1) calc(100vh - var(--chassis-bottom-metal-height) - var(--pedestal-mask-feather) + 50px),
-    rgba(255, 255, 255, 0) calc(100vh - var(--chassis-bottom-metal-height) + 50px),
+    rgba(255, 255, 255, 1) calc(var(--magitek-viewport-h, 100vh) - var(--chassis-bottom-metal-height) - var(--pedestal-mask-feather) + 50px),
+    rgba(255, 255, 255, 0) calc(var(--magitek-viewport-h, 100vh) - var(--chassis-bottom-metal-height) + 50px),
     rgba(255, 255, 255, 0) 100%
   );
   -webkit-mask-repeat: no-repeat;
