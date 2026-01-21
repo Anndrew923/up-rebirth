@@ -70,7 +70,14 @@
   },
   "assessment": {
     "explosive": "爆發力測試",
-    "ffmi": "🧪 FFMI 測試"
+    "ffmi": "🧪 FFMI 測試",
+    "labels": {
+      "strength": "力量",
+      "explosive": "爆發力",
+      "cardio": "心肺",
+      "ffmi": "FFMI",
+      "smm": "SMM"
+    }
   }
 }
 

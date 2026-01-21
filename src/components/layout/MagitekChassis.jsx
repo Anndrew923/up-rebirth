@@ -1,7 +1,11 @@
 import { useCallback, useMemo } from 'react';
 import { useUIStore } from '../../stores/uiStore';
 import { useUserStore } from '../../stores/userStore';
+import '../../styles/modules/ChassisGeometry.module.css';
 import styles from '../../styles/modules/MagitekChassis.module.css';
+import crownStyles from '../../styles/modules/Crown.module.css';
+import navStyles from '../../styles/modules/NavRail.module.css';
+import pedestalStyles from '../../styles/modules/Pedestal.module.css';
 import hudStyles from '../../styles/modules/MagitekHUD.module.css';
 import bottomPedestal from '../../assets/images/magitek/bottom_pedestal.png';
 import hudTopBar from '../../assets/images/magitek/hud-top-bar.png';
@@ -98,7 +102,9 @@ export const MagitekChassis = ({ background = null, children, foreground = null 
     <div
       className={`${styles.chassis} ${debugDocking ? styles.debugDocking : ''} ${
         debugDocking ? hudStyles.debugDocking : ''
-      } ${ghostFrameTest ? styles.ghostFrameTest : ''}`}
+      } ${debugDocking ? crownStyles.debugDocking : ''} ${
+        ghostFrameTest ? styles.ghostFrameTest : ''
+      } ${ghostFrameTest ? crownStyles.ghostFrameTest : ''}`}
     >
       {/* Background Layer - Ambient effects, decorative elements */}
       <div id="layer-master-bg" className={styles.backgroundLayer}>
@@ -123,59 +129,59 @@ export const MagitekChassis = ({ background = null, children, foreground = null 
         {/* Top Layer: HUD Mask & Exoskeleton Frame */}
         <div id="layer-hud-mask" className={styles.hudMaskLayer}>
           {/* Glass blur sublayer (must stay BELOW metal frames) */}
-          {navigationEnabled && <div className={styles.blurSublayerTop} aria-hidden="true" />}
+          {navigationEnabled && <div className={crownStyles.blurSublayerTop} aria-hidden="true" />}
 
           {/* V6 Crown (hud-top-bar.png) - must not be obscured by nav layers */}
           {navigationEnabled && (
-            <div className={styles.crownRoot} aria-label="magitek-crown">
-              <div className={styles.crownFrame} aria-hidden="false">
+            <div className={crownStyles.crownRoot} aria-label="magitek-crown">
+              <div className={crownStyles.crownFrame} aria-hidden="false">
                 {/* Avatar positioned BEHIND the HUD image (through the observation window) */}
-                <div className={styles.avatarPortal}>
+                <div className={crownStyles.avatarPortal}>
                   <AvatarSection variant="hud" />
                 </div>
 
                 {/* Notification hub (HUD bell) */}
                 <button
                   type="button"
-                  className={styles.crownNotificationButton}
+                  className={crownStyles.crownNotificationButton}
                   aria-label="通知中心"
                   title="通知中心"
                   onClick={() => openModal('notifications')}
                 >
-                  <img className={styles.crownNotificationIcon} src={hudBell} alt="" aria-hidden="true" />
+                  <img className={crownStyles.crownNotificationIcon} src={hudBell} alt="" aria-hidden="true" />
                 </button>
 
                 {/* Commander Identity Module (Single-Focus Layout) */}
                 <MagitekHUD user={user} />
 
-                <img className={styles.crownBarImage} src={hudTopBar} alt="" aria-hidden="true" />
+                <img className={crownStyles.crownBarImage} src={hudTopBar} alt="" aria-hidden="true" />
               </div>
             </div>
           )}
 
           {/* V6 Navigation Shell: Side rails + icon nodes (authenticated only) */}
           {navigationEnabled && (
-            <div className={styles.navShell} aria-label="magitek-navigation">
+            <div className={navStyles.navShell} aria-label="magitek-navigation">
               {/* Left rail (Emotional/Interaction) */}
-              <div className={`${styles.navRail} ${styles.navRailLeft}`} aria-hidden="true">
-                <img className={styles.railCap} src={railTop} alt="" aria-hidden="true" />
-                <div className={styles.railMid} style={{ backgroundImage: `url(${railMid})` }} aria-hidden="true" />
-                <img className={styles.railCap} src={railBottom} alt="" aria-hidden="true" />
+              <div className={`${navStyles.navRail} ${navStyles.navRailLeft}`} aria-hidden="true">
+                <img className={navStyles.railCap} src={railTop} alt="" aria-hidden="true" />
+                <div className={navStyles.railMid} style={{ backgroundImage: `url(${railMid})` }} aria-hidden="true" />
+                <img className={navStyles.railCap} src={railBottom} alt="" aria-hidden="true" />
               </div>
 
               {/* Right rail (Rational/Data) */}
-              <div className={`${styles.navRail} ${styles.navRailRight}`} aria-hidden="true">
-                <img className={styles.railCap} src={railTop} alt="" aria-hidden="true" />
-                <div className={styles.railMid} style={{ backgroundImage: `url(${railMid})` }} aria-hidden="true" />
-                <img className={styles.railCap} src={railBottom} alt="" aria-hidden="true" />
+              <div className={`${navStyles.navRail} ${navStyles.navRailRight}`} aria-hidden="true">
+                <img className={navStyles.railCap} src={railTop} alt="" aria-hidden="true" />
+                <div className={navStyles.railMid} style={{ backgroundImage: `url(${railMid})` }} aria-hidden="true" />
+                <img className={navStyles.railCap} src={railBottom} alt="" aria-hidden="true" />
               </div>
 
               {/* Icon Nodes (interactive) */}
-              <div className={styles.navNodes} aria-hidden="false">
+              <div className={navStyles.navNodes} aria-hidden="false">
                 {/* Left Rail Nodes */}
                 <button
                   type="button"
-                  className={`${styles.navNode} ${styles.nodeTime}`}
+                  className={`${navStyles.navNode} ${navStyles.nodeTime}`}
                   aria-label="時光迴廊（歷史 / 紀錄）"
                   title="時光迴廊"
                   onClick={() => goHash('#history')}
@@ -184,7 +190,7 @@ export const MagitekChassis = ({ background = null, children, foreground = null 
                 </button>
                 <button
                   type="button"
-                  className={`${styles.navNode} ${styles.nodeSoul}`}
+                  className={`${navStyles.navNode} ${navStyles.nodeSoul}`}
                   aria-label="靈魂共鳴（社群 / 互動）"
                   title="靈魂共鳴"
                   onClick={() => goHash('#community')}
@@ -195,7 +201,7 @@ export const MagitekChassis = ({ background = null, children, foreground = null 
                 {/* Right Rail Nodes */}
                 <button
                   type="button"
-                  className={`${styles.navNode} ${styles.nodeTools}`}
+                  className={`${navStyles.navNode} ${navStyles.nodeTools}`}
                   aria-label="時空計畫（工具 / 輔助）"
                   title="時空計畫"
                   onClick={() => goHash('#tools')}
@@ -204,7 +210,7 @@ export const MagitekChassis = ({ background = null, children, foreground = null 
                 </button>
                 <button
                   type="button"
-                  className={`${styles.navNode} ${styles.nodeTuning}`}
+                  className={`${navStyles.navNode} ${navStyles.nodeTuning}`}
                   aria-label="核心調律（設定 / 配置）"
                   title="核心調律"
                   onClick={() => goHash('#settings')}
@@ -213,7 +219,7 @@ export const MagitekChassis = ({ background = null, children, foreground = null 
                 </button>
                 <button
                   type="button"
-                  className={`${styles.navNode} ${styles.nodeHonor}`}
+                  className={`${navStyles.navNode} ${navStyles.nodeHonor}`}
                   aria-label="榮耀徽章（認證 / 成就）"
                   title="榮耀徽章"
                   onClick={() => goHash('#honor')}
@@ -233,16 +239,16 @@ export const MagitekChassis = ({ background = null, children, foreground = null 
 
           {/* Structural Closure: Bottom Pedestal */}
           {navigationEnabled && (
-            <div className={styles.pedestalWrapper}>
-              <div className={styles.pedestalOcclusion} aria-hidden="true" />
-              <div className={styles.blurSublayerBottom} aria-hidden="true" />
-              <img className={styles.pedestalImg} src={bottomPedestal} alt="" aria-hidden="true" />
+            <div className={pedestalStyles.pedestalWrapper}>
+              <div className={pedestalStyles.pedestalOcclusion} aria-hidden="true" />
+              <div className={pedestalStyles.blurSublayerBottom} aria-hidden="true" />
+              <img className={pedestalStyles.pedestalImg} src={bottomPedestal} alt="" aria-hidden="true" />
 
               {/* Trinity Entry Slots (placeholders) */}
-              <div className={styles.pedestalSlots} aria-hidden="false">
+              <div className={pedestalStyles.pedestalSlots} aria-hidden="false">
                 <button
                   type="button"
-                  className={`${styles.pedestalSlot} ${styles.slotLeft}`}
+                  className={`${pedestalStyles.pedestalSlot} ${pedestalStyles.slotLeft}`}
                   aria-label="左插槽：訓練場（評測專頁）"
                   title="訓練場（評測專頁）"
                   onClick={() => {
@@ -251,7 +257,7 @@ export const MagitekChassis = ({ background = null, children, foreground = null 
                 />
                 <button
                   type="button"
-                  className={`${styles.pedestalSlot} ${styles.slotCenter}`}
+                  className={`${pedestalStyles.pedestalSlot} ${pedestalStyles.slotCenter}`}
                   aria-label="中插槽：主控台（Home / 雷達圖）"
                   title="主控台"
                   onClick={() => {
@@ -260,7 +266,7 @@ export const MagitekChassis = ({ background = null, children, foreground = null 
                 />
                 <button
                   type="button"
-                  className={`${styles.pedestalSlot} ${styles.slotRight}`}
+                  className={`${pedestalStyles.pedestalSlot} ${pedestalStyles.slotRight}`}
                   aria-label="右插槽：天梯競技場（Arena）"
                   title="天梯競技場"
                   onClick={() => {

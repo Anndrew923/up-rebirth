@@ -1,0 +1,192 @@
+/**
+ * Crown (HUD Top Bar) Styles
+ * Extracted from MagitekChassis.module.css
+ * Geometry SSOT: src/styles/modules/ChassisGeometry.module.css
+ */
+
+/* Diagnostic toggles (bound to root className) */
+.debugDocking { --_debugDocking: 1; }
+.ghostFrameTest { --_ghostFrameTest: 1; }
+
+/* Glass blur sublayer (must stay BELOW metal frames) */
+.blurSublayerTop {
+  position: fixed;
+  left: 50%;
+  width: var(--magitek-hud-w);
+  transform: translateX(-50%);
+  top: 0;
+  height: var(--hud-seal-point); /* stop at seal line */
+  z-index: 50;
+  pointer-events: none;
+  background: rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 1) 0,
+    rgba(255, 255, 255, 1) 55%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 1) 0,
+    rgba(255, 255, 255, 1) 55%,
+    transparent 100%
+  );
+}
+
+/* ============================================
+   V6 Crown (hud-top-bar.png) + Avatar window
+   Required z-index: HUD bar 3, Avatar 2
+   ============================================ */
+
+.crownRoot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: auto; /* height liberation */
+  min-height: 0;
+  padding-top: var(--magitek-safe-top);
+  pointer-events: none;
+  isolation: isolate; /* keep pseudo-element stacking contained */
+  z-index: 110; /* Metal Frame Top */
+}
+
+.debugDocking .crownRoot {
+  outline: 2px solid rgba(255, 0, 255, 0.85);
+  outline-offset: -2px;
+}
+
+.crownFrame {
+  position: relative;
+  z-index: 100; /* Metal Frame Top */
+  margin-left: auto;
+  margin-right: auto;
+  /* Physical spacer drives height (SSOT) */
+  width: var(--magitek-hud-w);
+  pointer-events: none; /* children opt-in */
+
+  /* Avatar/Bell anchors */
+  --hud-avatar-left: var(--magitek-hud-avatar-left);
+  --hud-avatar-top: var(--magitek-hud-avatar-top);
+  /* Zero-gap percentage scaling: hole ratio + buffer */
+  --hud-hole-overflow: var(--magitek-hud-hole-overflow);
+  --hud-avatar-size: calc(var(--magitek-hud-hole-ratio) + var(--hud-hole-overflow));
+  --hud-bell-right: var(--magitek-hud-bell-right);
+  --hud-bell-y: var(--magitek-hud-bell-y);
+  --hud-bell-size: var(--magitek-hud-bell-size);
+}
+
+.crownFrame::before {
+  content: '';
+  display: block;
+  padding-top: var(--magitek-hud-frame-ratio-pct, 31.228%);
+}
+
+.crownBarImage {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  width: 100%;
+  height: 100%;
+  display: block;
+  user-select: none;
+}
+
+/* Ghost Exorcism Protocol: binary elimination (asset vs CSS) */
+.ghostFrameTest .crownBarImage {
+  opacity: 0;
+}
+
+.crownAvatarBehind,
+.avatarPortal {
+  position: absolute;
+  z-index: 2;
+  pointer-events: auto; /* allow avatar upload click */
+  left: var(--hud-avatar-left, 15.526%);
+  top: var(--hud-avatar-top, 49.625%);
+  transform: translate(-50%, -50%);
+  width: var(--hud-avatar-size, 20%);
+  height: auto;
+  aspect-ratio: 1 / 1 !important;
+  border-radius: 50%;
+  overflow: hidden;
+  /* Prevent starfield bleed if image underfills */
+  background: rgba(0, 0, 0, 0.9);
+}
+
+/* Notification bell - right crown */
+.crownNotificationButton {
+  position: absolute;
+  z-index: 4; /* above crown image */
+  pointer-events: auto;
+  right: var(--hud-bell-right, 5%);
+  top: var(--hud-bell-y, 50%);
+  transform: translateY(-50%);
+  width: var(--hud-bell-size, 9.94%);
+  height: auto;
+  aspect-ratio: 1 / 1 !important;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 191, 255, 0.55);
+  background: rgba(0, 0, 0, 0.32);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  cursor: pointer;
+  transition: transform 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+  box-shadow:
+    0 0 14px rgba(0, 191, 255, 0.48),
+    0 0 30px rgba(0, 191, 255, 0.22);
+}
+
+.crownNotificationButton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at 50% 50%, rgba(0, 191, 255, 0.12), rgba(0, 0, 0, 0) 62%);
+  pointer-events: none;
+}
+
+.crownNotificationButton:hover {
+  transform: translateY(calc(-50% - 1px));
+  border-color: rgba(0, 191, 255, 0.75);
+  background: rgba(0, 0, 0, 0.40);
+  box-shadow:
+    0 0 18px rgba(0, 191, 255, 0.62),
+    0 0 38px rgba(0, 191, 255, 0.26);
+}
+
+.crownNotificationButton:active {
+  transform: translateY(-50%) scale(0.98);
+}
+
+.crownNotificationButton:focus-visible {
+  outline: none;
+  border-color: rgba(0, 191, 255, 0.9);
+  box-shadow:
+    0 0 0 2px rgba(0, 191, 255, 0.22),
+    0 0 22px rgba(0, 191, 255, 0.66),
+    0 0 44px rgba(0, 191, 255, 0.28);
+}
+
+.crownNotificationIcon {
+  width: 92%;
+  height: 92%;
+  position: relative;
+  z-index: 1;
+  user-select: none;
+  pointer-events: none;
+  image-rendering: auto;
+  object-fit: contain;
+  filter:
+    drop-shadow(0 0 5px var(--magitek-cyan))
+    drop-shadow(0 0 14px var(--magitek-cyan))
+    drop-shadow(0 0 28px rgba(0, 191, 255, 0.45));
+}
+

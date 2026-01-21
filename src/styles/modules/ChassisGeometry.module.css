@@ -1,0 +1,84 @@
+/**
+ * ChassisGeometry SSOT
+ * - Consolidates all chassis math (HUD / rails / pedestal)
+ * - Safe-area baseline uses env(safe-area-inset-*)
+ * - Ghost Exorcism Protocol: -2px overlaps to prevent sub-pixel leakage
+ */
+
+:global(:root) {
+  /* Safe area baselines */
+  --magitek-safe-top: env(safe-area-inset-top, 0px);
+  --magitek-safe-bottom: env(safe-area-inset-bottom, 0px);
+
+  /* Ghost Exorcism overlap */
+  --magitek-overlap: 2px;
+  --magitek-overlap-neg: calc(-1 * var(--magitek-overlap));
+
+  /* Asset ratios (intrinsic) */
+  --magitek-hud-asset-w: 1710;
+  --magitek-hud-asset-h: 534;
+  --magitek-hud-frame-ratio: calc(534 / 1710);
+  --magitek-hud-frame-ratio-pct: 31.228%;
+
+  --magitek-pedestal-asset-w: 1284;
+  --magitek-pedestal-asset-h: 429;
+  --magitek-pedestal-ratio: calc(429 / 1284);
+
+  /* HUD physical boundary SSOT */
+  --magitek-hud-width: clamp(320px, calc(100vw - 24px), 1100px);
+  --magitek-hud-height: calc(var(--magitek-hud-width) * var(--magitek-hud-frame-ratio));
+
+  /* Mounting geometry (safe area is the hard baseline) */
+  --magitek-hud-overlap-ratio: 0.33;
+  --magitek-hud-visual-overlap: calc(var(--magitek-hud-height) * var(--magitek-hud-overlap-ratio));
+  /* Depth alignment: small safety margin to prevent HUD masking "mis-hit" on tall glow content */
+  --magitek-hud-seal-point: calc(var(--magitek-safe-top) + var(--magitek-hud-height) - var(--magitek-overlap) + 8px);
+  --magitek-hud-deep-mount-top: calc(var(--magitek-hud-seal-point) - var(--magitek-hud-visual-overlap));
+
+  /* Pedestal SSOT */
+  --magitek-pedestal-width: min(1284px, 100vw);
+  --magitek-pedestal-height: calc(var(--magitek-pedestal-width) * var(--magitek-pedestal-ratio));
+
+  /* Bottom occlusion sizing */
+  --magitek-chassis-buffer-base: 2rem;
+  --magitek-chassis-bottom-metal-height: calc(var(--magitek-pedestal-height) + var(--magitek-safe-bottom));
+  --magitek-chassis-bottom-height: calc(var(--magitek-chassis-bottom-metal-height) + var(--magitek-chassis-buffer-base));
+
+  /* Mask feather widths */
+  --magitek-hud-mask-feather: clamp(10px, 2vh, 24px);
+  --magitek-pedestal-mask-feather: clamp(10px, 2vh, 24px);
+
+  /* Rail width SSOT */
+  --magitek-rail-width: clamp(52px, 12vw, 140px);
+
+  /* Nav nodes (derive from rail width) */
+  --magitek-rail-inset-x: 8px;
+  --magitek-node-size: clamp(44px, calc(var(--magitek-rail-width) * 0.38), 56px);
+  --magitek-node-font-size: clamp(16px, calc(var(--magitek-node-size) * 0.40), 20px);
+  --magitek-node-offset-1: clamp(72px, 10vh, 110px);
+  --magitek-node-offset-2: clamp(170px, 18vh, 210px);
+  --magitek-node-offset-3: clamp(268px, 26vh, 320px);
+  --magitek-rail-pedestal-overlap: calc(var(--magitek-pedestal-height) * 0.0186);
+
+  /* Crown anchors (asset-calibrated, kept as % of HUD) */
+  --magitek-hud-avatar-left: 15.526%;
+  --magitek-hud-avatar-top: 50.5%;
+  --magitek-hud-hole-ratio: 17.3%;
+  --magitek-hud-hole-overflow: 2.7%;
+  --magitek-hud-bell-right: 5%;
+  --magitek-hud-bell-y: 50%;
+  --magitek-hud-bell-size: 9.94%;
+}
+
+@media (min-width: 768px) {
+  :global(:root) {
+    --magitek-chassis-buffer-base: 5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  :global(:root) {
+    --magitek-chassis-buffer-base: 8rem;
+  }
+}
+

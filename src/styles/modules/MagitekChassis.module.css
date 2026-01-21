@@ -7,33 +7,6 @@
  * globally here to enable theme-switchable skinning without touching component CSS.
  */
 
-:global(:root) {
-  --magitek-cyan: #00BFFF;
-  --magitek-cyan-glow: rgba(0, 191, 255, 0.55);
-  --magitek-cyan-dim: rgba(0, 191, 255, 0.35);
-  --magitek-glass-bg: rgba(0, 0, 0, 0.45);
-  --magitek-border-glow: rgba(0, 191, 255, 0.3);
-  --magitek-focus-glow: rgba(0, 191, 255, 0.7);
-  --magitek-blur: 10px;
-  /* iPad / tall screens: extra breathing room above chassis base */
-  --chassis-buffer-base: 2rem;
-
-  /* HUD intrinsic geometry SSOT (Avatar hole diameter / HUD width) */
-  --hud-hole-ratio: 17.3%;
-}
-
-@media (min-width: 768px) {
-  :global(:root) {
-    --chassis-buffer-base: 5rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  :global(:root) {
-    --chassis-buffer-base: 8rem; /* Even deeper for iPad Pro/Laptops */
-  }
-}
-
 .chassis {
   position: relative;
   width: 100%;
@@ -43,49 +16,30 @@
   flex-direction: column;
   /* Box-model standardization: never let padding inflate width */
   box-sizing: border-box;
-  /* Exposed to pages for precise rail docking */
-  /* JS-free geometry: derive HUD/pedestal heights from intrinsic asset ratios */
-  /* SSOT: HUD width drives its intrinsic height */
-  --hud-width: clamp(320px, calc(100vw - 24px), 1100px);
-  /* HUD physical boundary (rendered height) SSOT: must match .crownFrame::before */
-  --hud-render-height: calc(var(--hud-width) * (534 / 1710));
-  /* Mobile seal point: HUD bottom edge including safe-area inset */
-  --hud-seal-point: calc(env(safe-area-inset-top) + var(--hud-render-height));
-  /* Deep embed: exoskeleton overlaps into HUD territory */
-  --hud-overlap-ratio: 0.33; /* 1/3 of HUD height */
-  --hud-visual-overlap: calc(var(--hud-render-height) * var(--hud-overlap-ratio));
-  /* Green line (deep mount top) SSOT */
-  --hud-deep-mount-top: calc(var(--hud-seal-point) - var(--hud-visual-overlap));
-  /* 比例與安全區的動態綁定 */
-  --pedestal-aspect-ratio: (150 / 1710); /* 根據素材實際比例調整 */
-  --chassis-bottom-metal-height: calc(var(--hud-width) * var(--pedestal-aspect-ratio) + env(safe-area-inset-bottom));
-  --chassis-bottom-height: calc(var(--chassis-bottom-metal-height) + var(--chassis-buffer-base, 2rem));
-  /* Mask feather widths (smooth fade at edges) */
-  --hud-mask-feather: clamp(10px, 2vh, 24px);
-  --pedestal-mask-feather: clamp(10px, 2vh, 24px);
-  /* Retire `aspect-ratio` for cross-device stability: use a physical spacer ratio. */
-  --hud-frame-ratio: 0.31228; /* 534 / 1710 */
-  --hud-frame-ratio-pct: 31.228%; /* (534 / 1710) * 100% */
-  --hud-height: var(--hud-render-height);
+  /* Geometry SSOT: sourced from ChassisGeometry.module.css (global custom props) */
+  --hud-width: var(--magitek-hud-width);
+  --hud-height: var(--magitek-hud-height);
+  --hud-seal-point: var(--magitek-hud-seal-point);
+  --hud-visual-overlap: var(--magitek-hud-visual-overlap);
+  --hud-deep-mount-top: var(--magitek-hud-deep-mount-top);
+  /* Mask tuning (anti "cut-corner" glow clipping) */
+  --hud-mask-feather: calc(var(--magitek-hud-mask-feather) * 1.55);
+  --hud-mask-shift: -14px;
 
-  /* SSOT: Pedestal width drives its intrinsic height */
-  --pedestal-width: min(1284px, 100vw);
-  --pedestal-height: calc(var(--pedestal-width) * 0.3341); /* fallback: 429/1284 ≈ 0.3341 */
-  --pedestal-height: calc(var(--pedestal-width) * (429 / 1284));
+  --pedestal-width: var(--magitek-pedestal-width);
+  --pedestal-height: var(--magitek-pedestal-height);
+  --pedestal-mask-feather: var(--magitek-pedestal-mask-feather);
 
-  /* Backwards-compatible aliases */
-  --magitek-hud-w: var(--hud-width);
-  --magitek-hud-h: var(--hud-height);
-  --magitek-pedestal-w: var(--pedestal-width);
-  --magitek-pedestal-h: var(--pedestal-height);
-  /* =========================================
-     Responsive Chassis Geometry (V6)
-     ========================================= */
-  --rail-width: 12vw;
+  --chassis-bottom-metal-height: var(--magitek-chassis-bottom-metal-height);
+  --chassis-bottom-height: var(--magitek-chassis-bottom-height);
 
-  /* Internal aliases (keep existing selectors stable) */
-  --magitek-rail-width: var(--rail-width);
-  --magitek-scroll-pad-x: var(--rail-width);
+  --magitek-hud-w: var(--magitek-hud-width);
+  --magitek-hud-h: var(--magitek-hud-height);
+  --magitek-pedestal-w: var(--magitek-pedestal-width);
+  --magitek-pedestal-h: var(--magitek-pedestal-height);
+
+  --rail-width: var(--magitek-rail-width);
+  --magitek-scroll-pad-x: var(--magitek-rail-width);
 }
 
 /* Ensure border-box for every descendant (incl. spacers/pseudos). */
@@ -157,22 +111,22 @@
     to bottom,
     transparent 0,
     /* Fade-in across the overlap zone (green line -> seal point) */
-    transparent calc(var(--hud-deep-mount-top) - var(--hud-mask-feather)),
-    rgba(255, 255, 255, 1) calc(var(--hud-seal-point) + var(--hud-mask-feather)),
+    transparent calc(var(--hud-deep-mount-top) - var(--hud-mask-feather) + var(--hud-mask-shift, 0px)),
+    rgba(255, 255, 255, 1) calc(var(--hud-seal-point) + (var(--hud-mask-feather) * 0.35) + var(--hud-mask-shift, 0px)),
     /* Bottom hard cutoff: fully occlude at pedestal metal edge */
-    rgba(255, 255, 255, 1) calc(100vh - var(--chassis-bottom-metal-height) - var(--pedestal-mask-feather)),
-    rgba(255, 255, 255, 0) calc(100vh - var(--chassis-bottom-metal-height)),
+    rgba(255, 255, 255, 1) calc(100vh - var(--chassis-bottom-metal-height) - var(--pedestal-mask-feather) + 50px),
+    rgba(255, 255, 255, 0) calc(100vh - var(--chassis-bottom-metal-height) + 50px),
     rgba(255, 255, 255, 0) 100%
   );
   mask-image: linear-gradient(
     to bottom,
     transparent 0,
     /* Fade-in across the overlap zone (green line -> seal point) */
-    transparent calc(var(--hud-deep-mount-top) - var(--hud-mask-feather)),
-    rgba(255, 255, 255, 1) calc(var(--hud-seal-point) + var(--hud-mask-feather)),
+    transparent calc(var(--hud-deep-mount-top) - var(--hud-mask-feather) + var(--hud-mask-shift, 0px)),
+    rgba(255, 255, 255, 1) calc(var(--hud-seal-point) + (var(--hud-mask-feather) * 0.35) + var(--hud-mask-shift, 0px)),
     /* Bottom hard cutoff: fully occlude at pedestal metal edge */
-    rgba(255, 255, 255, 1) calc(100vh - var(--chassis-bottom-metal-height) - var(--pedestal-mask-feather)),
-    rgba(255, 255, 255, 0) calc(100vh - var(--chassis-bottom-metal-height)),
+    rgba(255, 255, 255, 1) calc(100vh - var(--chassis-bottom-metal-height) - var(--pedestal-mask-feather) + 50px),
+    rgba(255, 255, 255, 0) calc(100vh - var(--chassis-bottom-metal-height) + 50px),
     rgba(255, 255, 255, 0) 100%
   );
   -webkit-mask-repeat: no-repeat;
@@ -181,6 +135,10 @@
   mask-size: 100% 100%;
   -webkit-mask-mode: alpha;
   mask-mode: alpha;
+
+  /* Limb Restoration test: disable the mask entirely */
+  -webkit-mask-image: none;
+  mask-image: none;
 }
 
 .scrollInnerView {
@@ -216,13 +174,11 @@
 }
 
 /* Neon Scalpel (Diagnostic) - only when ?debugDock=1 */
+.debugDocking { --_debugDocking: 1; }
+.ghostFrameTest { --_ghostFrameTest: 1; }
+
 .debugDocking .exoskeleton {
   outline: 2px solid rgba(0, 255, 255, 0.9);
-  outline-offset: -2px;
-}
-
-.debugDocking .crownRoot {
-  outline: 2px solid rgba(255, 0, 255, 0.85);
   outline-offset: -2px;
 }
 
@@ -296,38 +252,6 @@
 }
 
 /* ============================================
-  Blur Sublayers (V6.3) - Glass without metal contamination
-  Stack: Metal (100+) > Blur (50) > Scroll content (below)
-  ============================================ */
-.blurSublayerTop {
-  position: fixed;
-  left: 50%;
-  width: var(--magitek-hud-w);
-  transform: translateX(-50%);
-  top: 0;
-  height: var(--hud-seal-point); /* stop at seal line */
-  z-index: 50;
-  pointer-events: none;
-  background: rgba(0, 0, 0, 0.22);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  -webkit-mask-image: linear-gradient(to bottom, rgba(255, 255, 255, 1) 0, rgba(255, 255, 255, 1) 55%, transparent 100%);
-  mask-image: linear-gradient(to bottom, rgba(255, 255, 255, 1) 0, rgba(255, 255, 255, 1) 55%, transparent 100%);
-}
-
-.blurSublayerBottom {
-  position: absolute;
-  inset: 0;
-  z-index: 50;
-  pointer-events: none;
-  background: rgba(0, 0, 0, 0.20);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  -webkit-mask-image: linear-gradient(to top, rgba(255, 255, 255, 1) 0, rgba(255, 255, 255, 1) 55%, transparent 100%);
-  mask-image: linear-gradient(to top, rgba(255, 255, 255, 1) 0, rgba(255, 255, 255, 1) 55%, transparent 100%);
-}
-
-/* ============================================
   Exoskeleton Dock (V6.2)
   - Physically docks below HUD bottom edge (no safe-area double counting)
   ============================================ */
@@ -341,375 +265,13 @@
   height: calc(100% - (var(--hud-seal-point) - var(--hud-visual-overlap)));
   /* NOTE: No padding here — structure must "grow" into overlap zone. */
   /* 向上微調產生重疊，避免亞像素漏光 */
-  margin-top: -2px;
+  margin-top: var(--magitek-overlap-neg);
   pointer-events: none;
   z-index: 35;
 }
 
 .exoskeleton > * {
   pointer-events: auto;
-}
-
-/* ============================================
-   V6 Crown (hud-top-bar.png) + Avatar window
-   Required z-index: HUD bar 3, Avatar 2
-   ============================================ */
-
-.crownRoot {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: auto; /* height liberation */
-  min-height: 0;
-  padding-top: env(safe-area-inset-top);
-  pointer-events: none;
-  isolation: isolate; /* keep pseudo-element stacking contained */
-  z-index: 110; /* Metal Frame Top */
-}
-
-.crownFrame {
-  position: relative;
-  z-index: 100; /* Metal Frame Top */
-  margin-left: auto;
-  margin-right: auto;
-  /* Physical spacer drives height (SSOT) */
-  width: var(--magitek-hud-w);
-  pointer-events: none; /* children opt-in */
-
-  /* Avatar/Bell anchors */
-  --hud-avatar-left: 15.526%;
-  /* Calibrated: compensate mobile safe-area + subpixel rounding */
-  --hud-avatar-top: 50.5%;
-  /* Zero-gap percentage scaling: hole ratio + buffer */
-  --hud-hole-overflow: 2.7%; /* 17.3% + 2.7% ≈ 20% */
-  --hud-avatar-size: calc(var(--hud-hole-ratio, 17.3%) + var(--hud-hole-overflow, 2.7%));
-  --hud-bell-right: 5%;
-  --hud-bell-y: 50%;
-  --hud-bell-size: 9.94%;
-}
-
-.crownFrame::before {
-  content: '';
-  display: block;
-  /* SSOT Ratio: (534 / 1710) * 100% */
-  padding-top: var(--hud-frame-ratio-pct, 31.228%);
-}
-
-.crownBarImage {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  pointer-events: none;
-  width: 100%;
-  height: 100%;
-  display: block;
-  user-select: none;
-}
-
-/* Ghost Exorcism Protocol: binary elimination (asset vs CSS) */
-.ghostFrameTest .crownBarImage {
-  opacity: 0;
-}
-
-.crownAvatarBehind,
-.avatarPortal {
-  position: absolute;
-  z-index: 2;
-  pointer-events: auto; /* allow avatar upload click */
-  left: var(--hud-avatar-left, 15.526%);
-  top: var(--hud-avatar-top, 49.625%);
-  transform: translate(-50%, -50%);
-  width: var(--hud-avatar-size, 20%);
-  height: auto;
-  aspect-ratio: 1 / 1 !important;
-  border-radius: 50%;
-  overflow: hidden;
-  /* Prevent starfield bleed if image underfills */
-  background: rgba(0, 0, 0, 0.9);
-}
-
-/* Notification bell - right crown */
-.crownNotificationButton {
-  position: absolute;
-  z-index: 4; /* above crown image */
-  pointer-events: auto;
-  right: var(--hud-bell-right, 5%);
-  top: var(--hud-bell-y, 50%);
-  transform: translateY(-50%);
-  width: var(--hud-bell-size, 9.94%);
-  height: auto;
-  aspect-ratio: 1 / 1 !important;
-  overflow: hidden;
-  display: grid;
-  place-items: center;
-  padding: 0;
-  border-radius: 50%;
-  border: 1px solid rgba(0, 191, 255, 0.55);
-  /* Base surface is opaque: prevents any gear texture bleed-through */
-  background: rgba(0, 0, 0, 0.92);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  cursor: pointer;
-  transition: transform 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
-  box-shadow:
-    0 0 14px rgba(0, 191, 255, 0.48),
-    0 0 30px rgba(0, 191, 255, 0.22);
-}
-
-.crownNotificationButton::before {
-  content: '';
-  position: absolute;
-  /* Hard mask layer (slightly oversized) */
-  inset: -2px;
-  border-radius: inherit;
-  background: rgba(0, 0, 0, 0.96);
-  pointer-events: none;
-}
-
-.crownNotificationButton::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: radial-gradient(circle at 50% 50%, rgba(0, 191, 255, 0.12), rgba(0, 0, 0, 0) 62%);
-  pointer-events: none;
-}
-
-.crownNotificationButton:hover {
-  transform: translateY(calc(-50% - 1px));
-  border-color: rgba(0, 191, 255, 0.75);
-  background: rgba(0, 0, 0, 0.80);
-  box-shadow:
-    0 0 18px rgba(0, 191, 255, 0.62),
-    0 0 38px rgba(0, 191, 255, 0.26);
-}
-
-.crownNotificationButton:active {
-  transform: translateY(-50%) scale(0.98);
-}
-
-.crownNotificationButton:focus-visible {
-  outline: none;
-  border-color: rgba(0, 191, 255, 0.9);
-  box-shadow:
-    0 0 0 2px rgba(0, 191, 255, 0.22),
-    0 0 22px rgba(0, 191, 255, 0.66),
-    0 0 44px rgba(0, 191, 255, 0.28);
-}
-
- .crownNotificationIcon {
-  width: 92%;
-  height: 92%;
-  position: relative;
-  z-index: 1;
-  user-select: none;
-  pointer-events: none;
-  image-rendering: auto;
-  object-fit: contain;
-  filter:
-    drop-shadow(0 0 5px var(--magitek-cyan))
-    drop-shadow(0 0 14px var(--magitek-cyan))
-    drop-shadow(0 0 28px rgba(0, 191, 255, 0.45));
-}
-
-/* ============================================
-   V6 Navigation Shell (Side Rails + Icon Nodes)
-   - Lives inside #layer-hud-mask
-   - 9-slice rails: top cap + repeat-y mid + bottom cap
-   ============================================ */
-
-.navShell {
-  position: absolute;
-  inset: 0;
-  z-index: 100; /* Metal Frame Top (must stay above blur sublayer) */
-  pointer-events: none;
-  --magitek-node-cyan: #00BFFF;
-}
-
-.navRail {
-  position: fixed;
-  /* Structural growth: rail starts at the exoskeleton's deep mount line */
-  top: calc(var(--hud-seal-point) - var(--hud-visual-overlap));
-  bottom: calc(var(--magitek-pedestal-h, 0px) - 8px);
-  width: var(--magitek-rail-width);
-  display: flex;
-  flex-direction: column;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.navRailLeft {
-  left: 0;
-}
-
-.navRailRight {
-  right: 0;
-}
-
-.railCap {
-  width: 100%;
-  height: auto;
-  display: block;
-  pointer-events: none;
-  user-select: none;
-}
-
-.railMid {
-  flex: 1;
-  width: 100%;
-  background-repeat: repeat-y;
-  background-position: center top;
-  background-size: 100% auto;
-}
-
-/* Mirror logic must not affect positioning */
-.navRailRight .railCap,
-.navRailRight .railMid {
-  transform: scaleX(-1);
-  transform-origin: center;
-}
-
-.navNodes {
-  position: fixed;
-  inset: 0;
-  z-index: 5;
-  pointer-events: none;
-}
-
-.navNode {
-  position: fixed;
-  width: 46px;
-  height: 46px;
-  border-radius: 999px;
-  border: 1px solid rgba(0, 191, 255, 0.45);
-  background: rgba(0, 0, 0, 0.32);
-  color: var(--magitek-node-cyan);
-  font-size: 18px;
-  font-weight: 900;
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-  pointer-events: auto;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow:
-    0 0 14px rgba(0, 191, 255, 0.38),
-    0 0 28px rgba(0, 191, 255, 0.22);
-  text-shadow:
-    0 0 10px rgba(0, 191, 255, 0.75),
-    0 0 22px rgba(0, 191, 255, 0.42);
-  transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
-}
-
-.navNode:hover {
-  transform: translateY(-1px);
-  background: rgba(0, 0, 0, 0.40);
-  border-color: rgba(0, 191, 255, 0.65);
-}
-
-.navNode:active {
-  transform: translateY(0) scale(0.98);
-}
-
-/* Node placements (V6 baseline) */
-.nodeTime {
-  left: calc(8px + (var(--magitek-rail-width) / 2) - 23px);
-  top: calc(var(--hud-seal-point) + 72px);
-}
-
-.nodeSoul {
-  left: calc(8px + (var(--magitek-rail-width) / 2) - 23px);
-  top: calc(var(--hud-seal-point) + 170px);
-}
-
-.nodeTools {
-  right: calc(8px + (var(--magitek-rail-width) / 2) - 23px);
-  top: calc(var(--hud-seal-point) + 72px);
-}
-
-.nodeTuning {
-  right: calc(8px + (var(--magitek-rail-width) / 2) - 23px);
-  top: calc(var(--hud-seal-point) + 170px);
-}
-
-.nodeHonor {
-  right: calc(8px + (var(--magitek-rail-width) / 2) - 23px);
-  top: calc(var(--hud-seal-point) + 268px);
-}
-
-.pedestalWrapper {
-  position: absolute;
-  left: 50%;
-  bottom: 0;
-  transform: translateX(-50%);
-  width: min(1284px, 100vw);
-  height: auto;
-  z-index: 100; /* Metal Frame Top */
-  pointer-events: auto; /* blocks click-through + enables slot overlays */
-  isolation: isolate;
-}
-
-.pedestalOcclusion {
-  position: absolute;
-  inset: 0;
-  z-index: 40; /* above scroll content, below blur + metal */
-  pointer-events: none;
-  /* Solid swallow layer: prevent any content leak through semi-transparent PNG */
-  background: radial-gradient(
-    120% 140% at 50% 20%,
-    rgba(0, 0, 0, 0.92),
-    rgba(0, 0, 0, 0.98) 58%,
-    rgba(0, 0, 0, 1) 100%
-  );
-}
-
-.pedestalImg {
-  position: relative;
-  z-index: 100; /* Metal Frame Top (sharp) */
-  width: 100%;
-  height: auto;
-  display: block;
-  pointer-events: none;
-  user-select: none;
-}
-
-.pedestalSlots {
-  position: absolute;
-  inset: 0;
-  z-index: 120; /* interactive layer above metal */
-  pointer-events: none;
-}
-
-.pedestalSlot {
-  position: absolute;
-  pointer-events: auto;
-  background: transparent;
-  border: 0;
-  padding: 0;
-  opacity: 0; /* placeholder - invisible hit zones */
-}
-
-/* Slot mapping (V6.1) - tuned for bottom_pedestal.png (1284x429) */
-.slotLeft {
-  left: 22.5%;
-  top: 20%;
-  width: 13.5%;
-  height: 48%;
-}
-
-.slotCenter {
-  left: 43.5%;
-  top: 14%;
-  width: 13%;
-  height: 58%;
-}
-
-.slotRight {
-  left: 64.5%;
-  top: 20%;
-  width: 13.5%;
-  height: 48%;
 }
 
 /* ============================================

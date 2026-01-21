@@ -1,3 +1,5 @@
+@import "./styles/MagitekTokens.css";
+
 :root {
   /* Design Tokens - Colors */
   --color-primary: #007bff;

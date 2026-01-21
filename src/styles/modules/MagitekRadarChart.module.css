@@ -1,0 +1,665 @@
+/**
+ * Magitek Radar Chart Styles (Performance-first)
+ * - Static grid layer (no animation)
+ * - Data polygon layer uses will-change
+ * - Glow uses CSS drop-shadow (no SVG filters)
+ */
+
+.root {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.svgStack {
+  position: relative;
+  width: 100%;
+  max-width: 450px;
+  aspect-ratio: 1 / 1;
+  /* NOTE: do NOT use paint containment; icons live outside grid */
+  contain: layout;
+  isolation: isolate;
+}
+
+.mainSvg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+
+/* Break the SVG cage: allow glow/particles to spill out */
+.svgStack svg {
+  overflow: visible !important;
+}
+
+.layerGlow,
+.layerRings,
+.layerGrid,
+.layerData,
+.layerOverlay {
+  pointer-events: none;
+}
+
+.layerNebula {
+  opacity: 0.6;
+}
+
+.nebulaBase {
+  opacity: 0.05;
+}
+
+.nebulaNoise {
+  opacity: 0.03;
+  mix-blend-mode: screen;
+}
+
+.starfieldFar {
+  will-change: transform;
+  animation: starDriftFar 140s linear infinite;
+  opacity: 0.55;
+}
+
+.starfieldNear {
+  will-change: transform;
+  animation: starDriftNear 80s linear infinite;
+  opacity: 0.7;
+}
+
+.star {
+  fill: rgba(255, 255, 255, 0.9);
+  will-change: opacity;
+  animation-name: starTwinkle;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+}
+
+.starNear {
+  fill: rgba(210, 255, 255, 0.9);
+}
+
+.dataBlend {
+  mix-blend-mode: screen;
+}
+
+.glowLayer {
+  opacity: 1;
+}
+
+.stabilizerGroup {
+  transform-origin: 50px 50px;
+  transform-box: fill-box;
+  will-change: transform;
+}
+
+.animate .stabilizerGroup {
+  /* 0.05 rpm = 1 rotation / 20 minutes = 1200s */
+  animation: stabilizerRotate 1200s linear infinite;
+}
+
+.stabilizerRing {
+  fill: none;
+  stroke: url(#magitekRingStroke);
+  stroke-width: 0.9;
+  vector-effect: non-scaling-stroke;
+}
+
+.stabilizerTick {
+  fill: rgba(0, 191, 255, 0.06);
+  stroke: url(#magitekRingStroke);
+  stroke-width: 0.6;
+  vector-effect: non-scaling-stroke;
+  opacity: 0.85;
+}
+
+.degreeTickMinor {
+  stroke: url(#magitekRingStroke);
+  stroke-width: 0.55;
+  vector-effect: non-scaling-stroke;
+}
+
+.degreeTickMajor {
+  stroke: url(#magitekRingStroke);
+  stroke-width: 0.7;
+  vector-effect: non-scaling-stroke;
+}
+
+.gridRing {
+  fill: none;
+  stroke: rgba(0, 191, 255, 0.16);
+  stroke-width: 0.8;
+  vector-effect: non-scaling-stroke;
+}
+
+.axisLine {
+  stroke: rgba(255, 255, 255, 0.12);
+  stroke-width: 0.7;
+  vector-effect: non-scaling-stroke;
+}
+
+.centerDot {
+  fill: rgba(255, 255, 255, 0.28);
+}
+
+.engineCoreOuter {
+  fill: rgba(255, 255, 255, 0.90);
+  stroke: rgba(0, 191, 255, 0.75);
+  stroke-width: 0.9;
+  vector-effect: non-scaling-stroke;
+}
+
+.engineCoreInner {
+  fill: rgba(0, 191, 255, 0.95);
+}
+
+.iconGroup {
+  pointer-events: none;
+}
+
+.beaconLine {
+  stroke: rgba(0, 191, 255, 0.30);
+  stroke-width: 0.65;
+  vector-effect: non-scaling-stroke;
+  filter:
+    drop-shadow(0 0 6px rgba(0, 191, 255, 0.18))
+    drop-shadow(0 0 14px rgba(0, 191, 255, 0.12));
+}
+
+.beaconWrap {
+  transform-origin: center;
+  transform-box: fill-box;
+  filter: drop-shadow(0 0 6px rgba(0, 191, 255, 0.22));
+}
+
+.beaconGlow {
+  fill: rgba(0, 191, 255, 0.08);
+  stroke: rgba(0, 191, 255, 0.48);
+  stroke-width: 0.9;
+  vector-effect: non-scaling-stroke;
+  filter:
+    drop-shadow(0 0 4px rgba(0, 191, 255, 0.28))
+    drop-shadow(0 0 10px rgba(0, 191, 255, 0.18));
+}
+
+.beaconHalo {
+  fill: rgba(0, 191, 255, 0.05);
+  stroke: rgba(0, 191, 255, 0.22);
+  stroke-width: 0.8;
+  vector-effect: non-scaling-stroke;
+  filter:
+    drop-shadow(0 0 10px rgba(0, 191, 255, 0.22))
+    drop-shadow(0 0 22px rgba(0, 191, 255, 0.16));
+}
+
+.awakeStat .beaconHalo {
+  fill: rgba(255, 215, 0, 0.04);
+  stroke: rgba(255, 215, 0, 0.20);
+  filter: url(#magitekGoldGlow);
+}
+
+.topStat .beaconHalo {
+  fill: rgba(255, 215, 0, 0.05);
+  stroke: rgba(255, 215, 0, 0.24);
+  filter: url(#magitekGoldGlow);
+}
+
+.limitBreak {
+  animation: beaconPulse 1.35s ease-in-out infinite;
+}
+
+.iconBg {
+  fill: rgba(0, 0, 0, 0.35);
+  stroke: rgba(0, 191, 255, 0.35);
+  stroke-width: 0.9;
+  vector-effect: non-scaling-stroke;
+}
+
+.iconText {
+  font-size: 6.4px;
+  fill: rgba(255, 255, 255, 0.94);
+  paint-order: stroke;
+  stroke: rgba(0, 0, 0, 0.55);
+  stroke-width: 1.2px;
+}
+
+.valueText {
+  font-size: 4.1px;
+  font-weight: 700;
+  fill: rgba(0, 191, 255, 0.92);
+  paint-order: stroke;
+  stroke: rgba(0, 0, 0, 0.55);
+  stroke-width: 0.9px;
+  filter:
+    drop-shadow(0 0 1px rgba(0, 0, 0, 0.92))
+    drop-shadow(0 0 7px rgba(0, 191, 255, 0.22));
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.valueTop {
+  fill: var(--magitek-gold);
+  filter:
+    drop-shadow(0 0 1px rgba(0, 0, 0, 0.92))
+    drop-shadow(0 0 10px var(--magitek-gold-glow));
+}
+
+.labelText {
+  font-size: 3.2px;
+  fill: rgba(255, 255, 255, 0.68);
+  paint-order: stroke;
+  stroke: rgba(0, 0, 0, 0.55);
+  stroke-width: 0.8px;
+}
+
+.labelTop {
+  fill: rgba(255, 245, 210, 0.78);
+}
+
+.dataSvg {
+  /* Efficient glow: container drop-shadow (GPU-friendly vs SVG filter) */
+  filter:
+    drop-shadow(0 0 6px rgba(0, 191, 255, 0.40))
+    drop-shadow(0 0 14px rgba(0, 191, 255, 0.22));
+}
+
+.dataLayer {
+  transform-origin: 50px 50px;
+  /* Optimization: hint compositor for the animated layer */
+  will-change: transform, opacity;
+}
+
+.layerData {
+  /* Plasma base glow (applies after SVG filter shader) */
+  filter:
+    drop-shadow(0 0 var(--magitek-plasma-glow-a) var(--magitek-cyan-glow))
+    drop-shadow(0 0 var(--magitek-plasma-glow-b) var(--magitek-plasma-glow-b-color));
+  /* Scoped bloom multiplier (local to radar only) */
+  --radar-particle-mult: 1;
+  /* Local SSOT: particle palette (can shift to gold without touching global tokens) */
+  --radar-particle-a-stroke: var(--magitek-particle-a-stroke);
+  --radar-particle-a-glow-a-color: var(--magitek-particle-a-glow-a-color);
+  --radar-particle-a-glow-b-color: var(--magitek-particle-a-glow-b-color);
+  --radar-particle-b-stroke: var(--magitek-particle-b-stroke);
+  --radar-particle-b-glow-a-color: var(--magitek-particle-b-glow-a-color);
+  --radar-particle-b-glow-b-color: var(--magitek-particle-b-glow-b-color);
+  --radar-particle-c-stroke: var(--magitek-particle-c-stroke);
+  --radar-particle-c-glow-a-color: var(--magitek-particle-c-glow-a-color);
+  --radar-particle-c-glow-b-color: var(--magitek-particle-c-glow-b-color);
+}
+
+.bloomActive {
+  /* Glow bloom when any stat reaches 100+ */
+  filter:
+    drop-shadow(0 0 var(--magitek-plasma-bloom-a) var(--magitek-cyan-glow))
+    drop-shadow(0 0 var(--magitek-plasma-bloom-b) var(--magitek-plasma-glow-b-color));
+  /* Intensity linkage: double particle brightness + thickness (SCOPED) */
+  --radar-particle-mult: 2;
+}
+
+.bloomActive.goldActive {
+  /* Solar Flare: MASSIVE gold resonance */
+  --radar-particle-mult: 3.5;
+}
+
+.goldActive {
+  /* Awakening: edge particles shift cyan -> gold */
+  --radar-particle-a-stroke: var(--magitek-particle-a-stroke-gold);
+  --radar-particle-a-glow-a-color: var(--magitek-particle-a-glow-a-color-gold);
+  --radar-particle-a-glow-b-color: var(--magitek-particle-a-glow-b-color-gold);
+  --radar-particle-b-stroke: var(--magitek-particle-b-stroke-gold);
+  --radar-particle-b-glow-a-color: var(--magitek-particle-b-glow-a-color-gold);
+  --radar-particle-b-glow-b-color: var(--magitek-particle-b-glow-b-color-gold);
+  --radar-particle-c-stroke: var(--magitek-particle-c-stroke-gold);
+  --radar-particle-c-glow-a-color: var(--magitek-particle-c-glow-a-color-gold);
+  --radar-particle-c-glow-b-color: var(--magitek-particle-c-glow-b-color-gold);
+}
+
+.dataPolygonBase {
+  stroke: var(--magitek-plasma-stroke);
+  stroke-width: var(--magitek-plasma-stroke-width);
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.dataParticle {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  will-change: stroke-dashoffset, opacity;
+  transition: stroke 240ms ease, opacity 240ms ease;
+}
+
+.dataParticleA {
+  opacity: calc(
+    var(--magitek-particle-a-opacity) * var(--radar-particle-mult, 1) * var(--magitek-particle-intensity, 1)
+  );
+  stroke: var(--radar-particle-a-stroke);
+  stroke-width: var(--magitek-particle-a-stroke-width);
+  stroke-dasharray: var(--magitek-particle-a-dasharray);
+  filter:
+    drop-shadow(
+      0 0 calc(var(--magitek-particle-a-glow-a) * var(--radar-particle-mult, 1)) var(--radar-particle-a-glow-a-color)
+    )
+    drop-shadow(
+      0 0 calc(var(--magitek-particle-a-glow-b) * var(--radar-particle-mult, 1)) var(--radar-particle-a-glow-b-color)
+    );
+  --_dashoffset: var(--magitek-particle-a-dashoffset);
+  --_ease: var(--magitek-particle-a-ease, var(--magitek-particle-ease-corners));
+}
+
+.dataParticleB {
+  opacity: calc(
+    var(--magitek-particle-b-opacity) * var(--radar-particle-mult, 1) * var(--magitek-particle-intensity, 1)
+  );
+  stroke: var(--radar-particle-b-stroke);
+  stroke-width: var(--magitek-particle-b-stroke-width);
+  stroke-dasharray: var(--magitek-particle-b-dasharray);
+  filter:
+    drop-shadow(
+      0 0 calc(var(--magitek-particle-b-glow-a) * var(--radar-particle-mult, 1)) var(--radar-particle-b-glow-a-color)
+    )
+    drop-shadow(
+      0 0 calc(var(--magitek-particle-b-glow-b) * var(--radar-particle-mult, 1)) var(--radar-particle-b-glow-b-color)
+    );
+  --_dashoffset: var(--magitek-particle-b-dashoffset);
+  --_ease: var(--magitek-particle-b-ease, var(--magitek-particle-ease-corners));
+}
+
+.dataParticleC {
+  opacity: calc(
+    var(--magitek-particle-c-opacity) * var(--radar-particle-mult, 1) * var(--magitek-particle-intensity, 1)
+  );
+  stroke: var(--radar-particle-c-stroke);
+  stroke-width: var(--magitek-particle-c-stroke-width);
+  stroke-dasharray: var(--magitek-particle-c-dasharray);
+  filter:
+    drop-shadow(
+      0 0 calc(var(--magitek-particle-c-glow-a) * var(--radar-particle-mult, 1)) var(--radar-particle-c-glow-a-color)
+    )
+    drop-shadow(
+      0 0 calc(var(--magitek-particle-c-glow-b) * var(--radar-particle-mult, 1)) var(--radar-particle-c-glow-b-color)
+    );
+  --_dashoffset: var(--magitek-particle-c-dashoffset);
+  --_ease: var(--magitek-particle-c-ease, var(--magitek-particle-ease-corners));
+}
+
+.animate .dataParticleA {
+  animation: particleFlowA var(--magitek-particle-a-speed) infinite;
+}
+
+.animate .dataParticleB {
+  animation: particleFlowB var(--magitek-particle-b-speed) infinite;
+}
+
+.animate .dataParticleC {
+  animation: particleFlowC var(--magitek-particle-c-speed) infinite;
+}
+
+.scanRing {
+  fill: none;
+  stroke: rgba(0, 191, 255, 0.26);
+  stroke-width: 0.75;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 2 7;
+  stroke-linecap: round;
+  transform-origin: 50px 50px;
+  transform-box: fill-box;
+  will-change: transform, opacity, stroke-dashoffset;
+  animation: scanPulse 4s linear infinite, scanDash 1.6s linear infinite;
+  opacity: 0;
+}
+
+.eruptionRing {
+  fill: rgba(0, 191, 255, 0.04);
+  stroke: rgba(0, 191, 255, 0.34);
+  stroke-width: 0.7;
+  vector-effect: non-scaling-stroke;
+  transform-origin: center;
+  transform-box: fill-box;
+  filter:
+    drop-shadow(0 0 10px rgba(0, 191, 255, 0.22))
+    drop-shadow(0 0 26px rgba(0, 191, 255, 0.16));
+  animation: eruptionPulse 0.62s ease-in-out infinite;
+}
+
+.dataOutline {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.22);
+  stroke-width: 0.8;
+  vector-effect: non-scaling-stroke;
+  opacity: 0.55;
+}
+
+.animate .dataLayer {
+  animation:
+    magitekAppear 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both,
+    magitekResonance 2600ms ease-in-out infinite;
+}
+
+.animate .bloomActive .dataLayer {
+  /* 2s breathing pulse during bloom */
+  animation:
+    magitekAppear 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both,
+    magitekResonance 2000ms ease-in-out infinite;
+}
+
+@keyframes magitekAppear {
+  from {
+    transform: scale(0.96);
+    opacity: 0.0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes magitekResonance {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.92;
+  }
+  50% {
+    transform: scale(1.02);
+    opacity: 1;
+  }
+}
+
+@keyframes stabilizerRotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes beaconPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+@keyframes scanPulse {
+  0% {
+    transform: scale(0);
+    opacity: 0.0;
+  }
+  12% {
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.0;
+  }
+}
+
+@keyframes scanDash {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: 36;
+  }
+}
+
+@keyframes particleFlowA {
+  0% {
+    stroke-dashoffset: 0;
+    animation-timing-function: var(--_ease, cubic-bezier(0.18, 0.95, 0.25, 1));
+  }
+  20% {
+    stroke-dashoffset: calc(var(--_dashoffset) * 0.20);
+    animation-timing-function: var(--_ease, cubic-bezier(0.18, 0.95, 0.25, 1));
+  }
+  40% {
+    stroke-dashoffset: calc(var(--_dashoffset) * 0.40);
+    animation-timing-function: var(--_ease, cubic-bezier(0.18, 0.95, 0.25, 1));
+  }
+  60% {
+    stroke-dashoffset: calc(var(--_dashoffset) * 0.60);
+    animation-timing-function: var(--_ease, cubic-bezier(0.18, 0.95, 0.25, 1));
+  }
+  80% {
+    stroke-dashoffset: calc(var(--_dashoffset) * 0.80);
+    animation-timing-function: var(--_ease, cubic-bezier(0.18, 0.95, 0.25, 1));
+  }
+  100% {
+    stroke-dashoffset: var(--_dashoffset);
+  }
+}
+
+@keyframes particleFlowB {
+  0% {
+    stroke-dashoffset: 0;
+    animation-timing-function: var(--_ease, cubic-bezier(0.18, 0.95, 0.25, 1));
+  }
+  20% {
+    stroke-dashoffset: calc(var(--_dashoffset) * 0.20);
+    animation-timing-function: var(--_ease, cubic-bezier(0.18, 0.95, 0.25, 1));
+  }
+  40% {
+    stroke-dashoffset: calc(var(--_dashoffset) * 0.40);
+    animation-timing-function: var(--_ease, cubic-bezier(0.18, 0.95, 0.25, 1));
+  }
+  60% {
+    stroke-dashoffset: calc(var(--_dashoffset) * 0.60);
+    animation-timing-function: var(--_ease, cubic-bezier(0.18, 0.95, 0.25, 1));
+  }
+  80% {
+    stroke-dashoffset: calc(var(--_dashoffset) * 0.80);
+    animation-timing-function: var(--_ease, cubic-bezier(0.18, 0.95, 0.25, 1));
+  }
+  100% {
+    stroke-dashoffset: var(--_dashoffset);
+  }
+}
+
+@keyframes particleFlowC {
+  0% {
+    stroke-dashoffset: 0;
+    animation-timing-function: var(--_ease, cubic-bezier(0.18, 0.95, 0.25, 1));
+  }
+  20% {
+    stroke-dashoffset: calc(var(--_dashoffset) * 0.20);
+    animation-timing-function: var(--_ease, cubic-bezier(0.18, 0.95, 0.25, 1));
+  }
+  40% {
+    stroke-dashoffset: calc(var(--_dashoffset) * 0.40);
+    animation-timing-function: var(--_ease, cubic-bezier(0.18, 0.95, 0.25, 1));
+  }
+  60% {
+    stroke-dashoffset: calc(var(--_dashoffset) * 0.60);
+    animation-timing-function: var(--_ease, cubic-bezier(0.18, 0.95, 0.25, 1));
+  }
+  80% {
+    stroke-dashoffset: calc(var(--_dashoffset) * 0.80);
+    animation-timing-function: var(--_ease, cubic-bezier(0.18, 0.95, 0.25, 1));
+  }
+  100% {
+    stroke-dashoffset: var(--_dashoffset);
+  }
+}
+
+@keyframes eruptionPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  50% {
+    transform: scale(1.12);
+    opacity: 1;
+  }
+}
+
+@keyframes starDriftFar {
+  from {
+    transform: translate(-0.6px, -0.4px);
+  }
+  to {
+    transform: translate(0.6px, 0.4px);
+  }
+}
+
+@keyframes starDriftNear {
+  from {
+    transform: translate(1.2px, -0.9px);
+  }
+  to {
+    transform: translate(-1.2px, 0.9px);
+  }
+}
+
+@keyframes starTwinkle {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate .dataLayer {
+    animation: none;
+  }
+
+  .animate .stabilizerGroup {
+    animation: none;
+  }
+
+  .limitBreak {
+    animation: none;
+  }
+
+  .scanRing {
+    animation: none;
+    opacity: 0;
+  }
+
+  .animate .dataParticleA,
+  .animate .dataParticleB,
+  .animate .dataParticleC {
+    animation: none;
+  }
+
+  .eruptionRing {
+    animation: none;
+  }
+
+  .starfieldFar,
+  .starfieldNear,
+  .star {
+    animation: none;
+  }
+}
+

@@ -1,0 +1,103 @@
+/**
+ * Pedestal Styles (Bottom pedestal + slots)
+ * Extracted from MagitekChassis.module.css
+ * Geometry SSOT: src/styles/modules/ChassisGeometry.module.css
+ */
+
+/* Bottom glass blur (stays below metal) */
+.blurSublayerBottom {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  background: rgba(0, 0, 0, 0.20);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  -webkit-mask-image: linear-gradient(
+    to top,
+    rgba(255, 255, 255, 1) 0,
+    rgba(255, 255, 255, 1) 55%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to top,
+    rgba(255, 255, 255, 1) 0,
+    rgba(255, 255, 255, 1) 55%,
+    transparent 100%
+  );
+}
+
+.pedestalWrapper {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: var(--magitek-pedestal-w);
+  height: auto;
+  z-index: 100; /* Metal Frame Top */
+  pointer-events: auto; /* blocks click-through + enables slot overlays */
+  isolation: isolate;
+}
+
+.pedestalOcclusion {
+  position: absolute;
+  inset: 0;
+  z-index: 40; /* above scroll content, below blur + metal */
+  pointer-events: none;
+  /* Solid swallow layer: prevent any content leak through semi-transparent PNG */
+  background: radial-gradient(
+    120% 140% at 50% 20%,
+    rgba(0, 0, 0, 0.92),
+    rgba(0, 0, 0, 0.98) 58%,
+    rgba(0, 0, 0, 1) 100%
+  );
+}
+
+.pedestalImg {
+  position: relative;
+  z-index: 100; /* Metal Frame Top (sharp) */
+  width: 100%;
+  height: auto;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+}
+
+.pedestalSlots {
+  position: absolute;
+  inset: 0;
+  z-index: 120; /* interactive layer above metal */
+  pointer-events: none;
+}
+
+.pedestalSlot {
+  position: absolute;
+  pointer-events: auto;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  opacity: 0; /* placeholder - invisible hit zones */
+}
+
+/* Slot mapping (V6.1) - tuned for bottom_pedestal.png (1284x429) */
+.slotLeft {
+  left: 22.5%;
+  top: 20%;
+  width: 13.5%;
+  height: 48%;
+}
+
+.slotCenter {
+  left: 43.5%;
+  top: 14%;
+  width: 13%;
+  height: 58%;
+}
+
+.slotRight {
+  left: 64.5%;
+  top: 20%;
+  width: 13.5%;
+  height: 48%;
+}
+

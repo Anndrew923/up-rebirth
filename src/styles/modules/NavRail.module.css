@@ -1,0 +1,125 @@
+/**
+ * NavRail Styles (Side rails + node buttons)
+ * Extracted from MagitekChassis.module.css
+ * Geometry SSOT: src/styles/modules/ChassisGeometry.module.css
+ */
+
+.navShell {
+  position: absolute;
+  inset: 0;
+  z-index: 100; /* Metal Frame Top (must stay above blur sublayer) */
+  pointer-events: none;
+  --magitek-node-cyan: var(--magitek-cyan);
+}
+
+.navRail {
+  position: fixed;
+  /* Structural growth: rail starts at the exoskeleton's deep mount line */
+  top: calc(var(--hud-seal-point) - var(--hud-visual-overlap) + var(--magitek-overlap-neg));
+  bottom: calc(var(--magitek-pedestal-h, 0px) - var(--magitek-rail-pedestal-overlap));
+  width: var(--magitek-rail-width);
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.navRailLeft {
+  left: 0;
+}
+
+.navRailRight {
+  right: 0;
+}
+
+.railCap {
+  width: 100%;
+  height: auto;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+}
+
+.railMid {
+  flex: 1;
+  width: 100%;
+  background-repeat: repeat-y;
+  background-position: center top;
+  background-size: 100% auto;
+}
+
+/* Mirror logic must not affect positioning */
+.navRailRight .railCap,
+.navRailRight .railMid {
+  transform: scaleX(-1);
+  transform-origin: center;
+}
+
+.navNodes {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.navNode {
+  position: fixed;
+  width: var(--magitek-node-size);
+  height: var(--magitek-node-size);
+  border-radius: 999px;
+  border: 1px solid rgba(0, 191, 255, 0.45);
+  background: rgba(0, 0, 0, 0.32);
+  color: var(--magitek-node-cyan);
+  font-size: var(--magitek-node-font-size);
+  font-weight: 900;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  pointer-events: auto;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow:
+    0 0 14px rgba(0, 191, 255, 0.38),
+    0 0 28px rgba(0, 191, 255, 0.22);
+  text-shadow:
+    0 0 10px rgba(0, 191, 255, 0.75),
+    0 0 22px rgba(0, 191, 255, 0.42);
+  transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+}
+
+.navNode:hover {
+  transform: translateY(-1px);
+  background: rgba(0, 0, 0, 0.40);
+  border-color: rgba(0, 191, 255, 0.65);
+}
+
+.navNode:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Node placements (SSOT-derived offsets) */
+.nodeTime {
+  left: calc(var(--magitek-rail-inset-x) + (var(--magitek-rail-width) / 2) - (var(--magitek-node-size) / 2));
+  top: calc(var(--hud-seal-point) + var(--magitek-node-offset-1));
+}
+
+.nodeSoul {
+  left: calc(var(--magitek-rail-inset-x) + (var(--magitek-rail-width) / 2) - (var(--magitek-node-size) / 2));
+  top: calc(var(--hud-seal-point) + var(--magitek-node-offset-2));
+}
+
+.nodeTools {
+  right: calc(var(--magitek-rail-inset-x) + (var(--magitek-rail-width) / 2) - (var(--magitek-node-size) / 2));
+  top: calc(var(--hud-seal-point) + var(--magitek-node-offset-1));
+}
+
+.nodeTuning {
+  right: calc(var(--magitek-rail-inset-x) + (var(--magitek-rail-width) / 2) - (var(--magitek-node-size) / 2));
+  top: calc(var(--hud-seal-point) + var(--magitek-node-offset-2));
+}
+
+.nodeHonor {
+  right: calc(var(--magitek-rail-inset-x) + (var(--magitek-rail-width) / 2) - (var(--magitek-node-size) / 2));
+  top: calc(var(--hud-seal-point) + var(--magitek-node-offset-3));
+}
+

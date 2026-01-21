@@ -61,7 +61,14 @@
   },
   "assessment": {
     "explosive": "Explosive power",
-    "ffmi": "FFMI"
+    "ffmi": "FFMI",
+    "labels": {
+      "strength": "Strength",
+      "explosive": "Explosive",
+      "cardio": "Cardio",
+      "ffmi": "FFMI",
+      "smm": "SMM"
+    }
   }
 }
 
