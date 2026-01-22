@@ -135,10 +135,6 @@
   mask-size: 100% 100%;
   -webkit-mask-mode: alpha;
   mask-mode: alpha;
-
-  /* Limb Restoration test: disable the mask entirely */
-  -webkit-mask-image: none;
-  mask-image: none;
 }
 
 .scrollInnerView {

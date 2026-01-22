@@ -1,7 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { useUIStore } from '../../stores/uiStore';
 import { useUserStore } from '../../stores/userStore';
-import '../../styles/modules/ChassisGeometry.module.css';
 import styles from '../../styles/modules/MagitekChassis.module.css';
 import crownStyles from '../../styles/modules/Crown.module.css';
 import navStyles from '../../styles/modules/NavRail.module.css';

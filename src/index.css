@@ -31,9 +31,11 @@
 }
 
 html,
-body,
-#root {
-  height: 100%;
+body {
+  height: 100vh;
+  width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 * {
@@ -51,6 +53,7 @@ body {
 
 #root {
   width: 100%;
+  height: 100%;
   min-height: 100%;
   /* Positioning Stability: prevent fixed elements from being "captured" by transforms */
   transform: none;

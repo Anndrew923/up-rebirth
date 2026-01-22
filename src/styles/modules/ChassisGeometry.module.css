@@ -38,23 +38,23 @@
 
   /* HUD physical boundary SSOT */
   --magitek-hud-width: clamp(320px, calc(100vw - 24px), 1100px);
-  --magitek-hud-height: calc(var(--magitek-hud-width) * var(--magitek-hud-frame-ratio));
+  --magitek-hud-height: calc(var(--magitek-hud-width, 1100px) * var(--magitek-hud-frame-ratio, 0.3122807018));
 
   /* Mounting geometry (safe area is the hard baseline) */
   --magitek-hud-overlap-ratio: 0.33;
-  --magitek-hud-visual-overlap: calc(var(--magitek-hud-height) * var(--magitek-hud-overlap-ratio));
+  --magitek-hud-visual-overlap: calc(var(--magitek-hud-height, 343px) * var(--magitek-hud-overlap-ratio, 0.33));
   /* Depth alignment: small safety margin to prevent HUD masking "mis-hit" on tall glow content */
-  --magitek-hud-seal-point: calc(var(--magitek-safe-top) + var(--magitek-hud-height) - var(--magitek-overlap) + 8px);
-  --magitek-hud-deep-mount-top: calc(var(--magitek-hud-seal-point) - var(--magitek-hud-visual-overlap));
+  --magitek-hud-seal-point: calc(var(--magitek-safe-top, 0px) + var(--magitek-hud-height, 343px) - var(--magitek-overlap, 2px) + 8px);
+  --magitek-hud-deep-mount-top: calc(var(--magitek-hud-seal-point, 349px) - var(--magitek-hud-visual-overlap, 113px));
 
   /* Pedestal SSOT */
   --magitek-pedestal-width: min(1284px, 100vw);
-  --magitek-pedestal-height: calc(var(--magitek-pedestal-width) * var(--magitek-pedestal-ratio));
+  --magitek-pedestal-height: calc(var(--magitek-pedestal-width, 1284px) * var(--magitek-pedestal-ratio, 0.3341121495));
 
   /* Bottom occlusion sizing */
   --magitek-chassis-buffer-base: 2rem;
-  --magitek-chassis-bottom-metal-height: calc(var(--magitek-pedestal-height) + var(--magitek-safe-bottom));
-  --magitek-chassis-bottom-height: calc(var(--magitek-chassis-bottom-metal-height) + var(--magitek-chassis-buffer-base));
+  --magitek-chassis-bottom-metal-height: calc(var(--magitek-pedestal-height, 429px) + var(--magitek-safe-bottom, 0px));
+  --magitek-chassis-bottom-height: calc(var(--magitek-chassis-bottom-metal-height, 429px) + var(--magitek-chassis-buffer-base, 2rem));
 
   /* Mask feather widths */
   /* 修復：移除 vh 單位，改用固定值避免手機瀏覽器工具列漂移 */
@@ -91,12 +91,12 @@
 }
 
 /* Environment variable downgrade protocol:
-   修復：分開處理 env()，避免 clamp() 與 env() 組合解析失敗 */
+   修復：使用更安全的語法，確保在所有環境下都能正確解析 */
 @supports (padding: env(safe-area-inset-top)) {
   :global(:root) {
-    /* 先取 env 值，再用 max/min 確保非負且不超過上限（PC=0，手機才生效） */
-    --magitek-safe-top: max(0px, min(env(safe-area-inset-top), 44px));
-    --magitek-safe-bottom: max(0px, min(env(safe-area-inset-bottom), 34px));
+    /* 使用 env() 的 fallback 機制，然後用 clamp() 限制範圍（PC=0，手機才生效） */
+    --magitek-safe-top: clamp(0px, env(safe-area-inset-top, 0px), 44px);
+    --magitek-safe-bottom: clamp(0px, env(safe-area-inset-bottom, 0px), 34px);
   }
 }
 
