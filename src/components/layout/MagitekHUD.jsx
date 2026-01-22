@@ -7,6 +7,8 @@ export const MagitekHUD = ({ user }) => {
   const textRef = useRef(null);
   const [marquee, setMarquee] = useState({ active: false, shiftPx: 0, durationS: 0 });
 
+  const nickname = user?.nickname || 'UserNickname';
+
   const measure = useCallback(() => {
     const viewport = viewportRef.current;
     const textEl = textRef.current;
@@ -36,7 +38,7 @@ export const MagitekHUD = ({ user }) => {
       fontsReady.then(measure).catch(() => {});
     }
     return () => window.cancelAnimationFrame(raf);
-  }, [measure, user?.combatPower, user?.nickname]);
+  }, [measure, nickname]);
 
   useLayoutEffect(() => {
     if (!viewportRef.current || typeof window.ResizeObserver !== 'function') return;
@@ -49,7 +51,8 @@ export const MagitekHUD = ({ user }) => {
 
   return (
     <div className={hudStyles.centerScreen} aria-label="身分插槽">
-      <div className={hudStyles.identitySlot} aria-label="身分資訊">
+      {/* The Slot Container SSOT: 絕對定位鎖定在 1710x534 素材的黑色槽位 */}
+      <div className={hudStyles.nameSlot} aria-label="名字槽位">
         <div
           className={`${hudStyles.identityViewport} ${marquee.active ? hudStyles.identityViewportMasked : ''}`}
           ref={viewportRef}
@@ -68,8 +71,7 @@ export const MagitekHUD = ({ user }) => {
                 : undefined
             }
           >
-            <span className={hudStyles.identityPrefix}>[{user?.combatPower ?? 0}]</span>
-            <span className={hudStyles.identityName}>{user?.nickname || 'UserNickname'}</span>
+            <span className={hudStyles.identityName}>{nickname}</span>
           </span>
         </div>
       </div>

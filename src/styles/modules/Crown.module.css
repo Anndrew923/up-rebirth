@@ -51,12 +51,14 @@
   padding-top: var(--magitek-safe-top);
   pointer-events: none;
   isolation: isolate; /* keep pseudo-element stacking contained */
-  z-index: 110; /* Metal Frame Top */
+  z-index: 100; /* Metal Frame Top */
 }
 
+/* HUD Boundary: Magenta (品紅色) - 必須緊貼 HUD 外邊緣 */
 .debugDocking .crownRoot {
-  outline: 2px solid rgba(255, 0, 255, 0.85);
+  outline: 2px solid #FF00FF !important; /* Magenta - HUD Boundary */
   outline-offset: -2px;
+  box-sizing: border-box;
 }
 
 .crownFrame {

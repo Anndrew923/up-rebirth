@@ -174,9 +174,11 @@
 .debugDocking { --_debugDocking: 1; }
 .ghostFrameTest { --_ghostFrameTest: 1; }
 
+/* Exoskeleton Boundary: Cyan (青色) - 必須緊貼外骨骼最頂端（Top Edge） */
 .debugDocking .exoskeleton {
-  outline: 2px solid rgba(0, 255, 255, 0.9);
+  outline: 2px solid #00FFFF !important; /* Cyan - Exoskeleton Top Edge */
   outline-offset: -2px;
+  box-sizing: border-box;
 }
 
 .debugDocking .pageFooterSpacer {
@@ -249,22 +251,36 @@
 }
 
 /* ============================================
-  Exoskeleton Dock (V6.2)
-  - Physically docks below HUD bottom edge (no safe-area double counting)
-  ============================================ */
+   Exoskeleton Dock (V6.2.1 - Alignment Fixed)
+   - Using Negative Margin Anchor Logic
+   ============================================ */
 .exoskeleton {
-  position: absolute;
-  /* Pull up by the overlap amount */
-  top: calc(var(--hud-seal-point) - var(--hud-visual-overlap));
+  position: fixed;
+  
+  /* Anchor to the HUD baseline */
+  top: var(--hud-seal-point);
   left: 0;
   width: 100%;
-  /* Compensate height to keep it filling the screen */
-  height: calc(100% - (var(--hud-seal-point) - var(--hud-visual-overlap)));
-  /* NOTE: No padding here — structure must "grow" into overlap zone. */
-  /* 霓虹燈手術刀：向上微調產生重疊，避免亞像素漏光 */
-  margin-top: -2px;
+
+  /* 1/3 Deep Dive: Force physical overlap */
+  margin-top: calc(-1 * var(--hud-visual-overlap)) !important;
+
+  /* Height compensation: Viewport - Base + Overlap */
+  height: calc(
+    var(--magitek-viewport-h, 100vh) - 
+    var(--hud-seal-point) + 
+    var(--hud-visual-overlap)
+  );
+
+  /* Correct stacking: Above BG (1000), below Content (2000) */
+  z-index: 1100; 
+
   pointer-events: none;
-  z-index: 35;
+  box-sizing: border-box;
+
+  /* Mandatory Debug: Neon Scalpel */
+  outline: 2px solid #00FFFF !important;
+  outline-offset: -2px;
 }
 
 .exoskeleton > * {

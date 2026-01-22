@@ -11,27 +11,48 @@
   box-shadow: none !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
-
-  /* Absolute Centering (Binary Elimination: lock geometry) */
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%); /* 完美幾何中心 */
-
-  /* SSOT-ish display width: tunable but bounded */
-  --hud-display-width: clamp(240px, calc(var(--magitek-hud-w, 1100px) * 0.52), 640px);
-  width: var(--hud-display-width);
-  height: 40%;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0 1rem; /* never touch the metal bezel */
+  /* 覆蓋整個 HUD 框架區域 */
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
 }
 
 .debugDocking {
   /* Marker class for module-local debugging (no styles by default) */
 }
 
+/* The Slot Container SSOT: 絕對定位鎖定在 1710x534 素材的黑色槽位 */
+.nameSlot {
+  position: absolute;
+  /* 根據 1710x534 素材的像素級百分比定位 */
+  left: 35%; /* 避開頭像圓環 */
+  width: 45%; /* 延伸至鈴鐺前 */
+  top: 32%;
+  height: 38%;
+  box-sizing: border-box;
+  
+  /* Flex 居中 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  
+  /* Safety Reset */
+  padding: 0;
+  margin: 0;
+  background: transparent !important;
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  mask-image: none !important;
+  -webkit-mask-image: none !important;
+}
+
+/* 保留 identitySlot 作為向後兼容（如果其他地方有引用） */
 .identitySlot {
   width: 100%;
   min-width: 0;
@@ -70,13 +91,18 @@
   overflow: hidden;
   white-space: nowrap;
   height: 100%;
-  padding: 0 clamp(8px, 1vw, 12px);
+  padding: 0 clamp(4px, 0.5vw, 8px); /* 減少 padding，讓文字有更多空間 */
   position: relative;
   z-index: 1;
   background: transparent !important;
   box-shadow: none !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
+  box-sizing: border-box;
+
+  /* 啟用容器查詢以支持 cqw 單位（如果瀏覽器支援） */
+  container-type: inline-size;
+  container-name: identity-viewport;
 
   /* Vertical breathing room: 25% above/below */
   display: grid;
@@ -93,7 +119,7 @@
   grid-row: 2;
   display: inline-flex;
   align-items: baseline;
-  gap: 10px;
+  gap: 0;
   transform: translateX(0);
   white-space: nowrap;
   background: transparent !important;
@@ -113,21 +139,11 @@
   animation: hudIdentityScroll var(--identity-marquee-duration, 10s) linear infinite alternate;
 }
 
-.identityPrefix {
-  /* Magenta/Pink neon small */
-  font-size: 0.78em;
-  font-weight: 300;
-  letter-spacing: 0.9px;
-  color: rgba(255, 0, 255, 0.92);
-  text-shadow:
-    0 0 8px rgba(255, 0, 255, 0.42),
-    0 0 18px rgba(255, 0, 255, 0.24),
-    0 0 28px rgba(255, 0, 255, 0.12);
-}
-
 .identityName {
-  /* Cyan/White neon large */
-  font-size: 1.08em;
+  /* Cyan/White neon large with CSS-only dynamic scaling */
+  /* 使用 clamp() 實現動態縮放：短名字大氣，長名字自動縮小 */
+  /* Asset-Based Locking: 使用 3.8cqw 精確鎖定 */
+  font-size: clamp(12px, 3.8cqw, 18px);
   font-weight: 300;
   letter-spacing: 1.5px;
   color: rgba(240, 252, 255, 0.94);
@@ -135,6 +151,11 @@
     0 0 10px rgba(0, 191, 255, 0.50),
     0 0 22px rgba(0, 191, 255, 0.26),
     0 0 40px rgba(0, 191, 255, 0.12);
+  /* 平滑過渡 */
+  transition: font-size 0.2s ease-out;
+  /* No ellipsis allowed: 文字必須完整顯示，通過動態縮放和 marquee 處理 */
+  white-space: nowrap;
+  /* NO ellipsis, NO overflow */
 }
 
 @keyframes hudIdentityScroll {
@@ -162,12 +183,22 @@
 }
 
 /* Neon Scalpel support: visualize Identity bounds */
+/* HUD Boundary: Magenta (品紅色) - 必須緊貼 HUD 外邊緣 */
 .debugDocking .centerScreen {
-  outline: 2px dashed rgba(255, 255, 0, 0.85);
+  outline: 2px solid #FF00FF !important; /* Magenta - HUD Boundary */
   outline-offset: -2px;
+  box-sizing: border-box;
+}
+
+/* Name Slot Boundary: 顯示黑色槽位的精確邊界 */
+.debugDocking .nameSlot {
+  outline: 2px solid rgba(255, 0, 255, 0.8) !important; /* Magenta for slot boundary */
+  outline-offset: -2px;
+  box-sizing: border-box;
 }
 
 .debugDocking .identitySlot {
-  outline: 1px solid rgba(0, 255, 255, 0.8);
+  outline: 1px solid rgba(255, 0, 255, 0.6) !important; /* Lighter Magenta for inner boundary */
   outline-offset: -1px;
+  box-sizing: border-box;
 }

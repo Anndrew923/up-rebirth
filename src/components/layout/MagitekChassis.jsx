@@ -73,11 +73,11 @@ export const MagitekChassis = ({ background = null, children, foreground = null 
   // V6 Spec: Bottom pedestal + side rails are the ONLY navigation entry points (authenticated surface only).
   const navigationEnabled = Boolean(isAuthenticated);
 
-  // Neon Scalpel (Diagnostic): enable only when ?debugDock=1
+  // Neon Scalpel (Diagnostic): enable only when ?debugDock=1 or ?debug=1
   const debugDocking = useMemo(() => {
     try {
       const params = new URLSearchParams(window.location.search || '');
-      return params.get('debugDock') === '1';
+      return params.get('debugDock') === '1' || params.get('debug') === '1';
     } catch {
       return false;
     }
