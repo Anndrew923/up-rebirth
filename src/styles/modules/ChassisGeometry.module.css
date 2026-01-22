@@ -11,8 +11,8 @@
      ========================================================= */
 
   /* Dynamic viewport height (prevents mobile URL-bar drift)
-     Degrade protocol: default to 100% baseline; opt-in dvh where supported. */
-  --magitek-viewport-h: 100%;
+     修復：統一基準面為 100vh，確保所有環境一致 */
+  --magitek-viewport-h: 100vh;
 
   /* Safe area baselines (解除硬化補償：PC=0，手機才生效)
      Default to 0 so desktop/local never shifts. */
@@ -24,15 +24,15 @@
   --magitek-overlap-neg: calc(-1 * var(--magitek-overlap));
 
   /* Asset ratios (intrinsic) */
-  /* Unit-conversion guard: always carry px units (anti-minify edge cases) */
-  --magitek-hud-asset-w: calc(1710 * 1px);
-  --magitek-hud-asset-h: calc(534 * 1px);
+  /* 修復：直接寫 px，移除無效的 calc(1710 * 1px) 語法 */
+  --magitek-hud-asset-w: 1710px;
+  --magitek-hud-asset-h: 534px;
   /* Hard-coded (do NOT depend on runtime image dimensions) */
   --magitek-hud-frame-ratio: 0.3122807018;
   --magitek-hud-frame-ratio-pct: 31.228%;
 
-  --magitek-pedestal-asset-w: calc(1284 * 1px);
-  --magitek-pedestal-asset-h: calc(429 * 1px);
+  --magitek-pedestal-asset-w: 1284px;
+  --magitek-pedestal-asset-h: 429px;
   /* Hard-coded (do NOT depend on runtime image dimensions) */
   --magitek-pedestal-ratio: 0.3341121495;
 
@@ -57,8 +57,9 @@
   --magitek-chassis-bottom-height: calc(var(--magitek-chassis-bottom-metal-height) + var(--magitek-chassis-buffer-base));
 
   /* Mask feather widths */
-  --magitek-hud-mask-feather: clamp(10px, 2vh, 24px);
-  --magitek-pedestal-mask-feather: clamp(10px, 2vh, 24px);
+  /* 修復：移除 vh 單位，改用固定值避免手機瀏覽器工具列漂移 */
+  --magitek-hud-mask-feather: 16px;
+  --magitek-pedestal-mask-feather: 16px;
 
   /* Rail width SSOT */
   --magitek-rail-width: clamp(52px, 12vw, 140px);
@@ -67,9 +68,10 @@
   --magitek-rail-inset-x: 8px;
   --magitek-node-size: clamp(44px, calc(var(--magitek-rail-width) * 0.38), 56px);
   --magitek-node-font-size: clamp(16px, calc(var(--magitek-node-size) * 0.40), 20px);
-  --magitek-node-offset-1: clamp(72px, 10vh, 110px);
-  --magitek-node-offset-2: clamp(170px, 18vh, 210px);
-  --magitek-node-offset-3: clamp(268px, 26vh, 320px);
+  /* 修復：移除 vh 單位，改用固定值避免手機瀏覽器工具列漂移 */
+  --magitek-node-offset-1: 90px;
+  --magitek-node-offset-2: 200px;
+  --magitek-node-offset-3: 300px;
   --magitek-rail-pedestal-overlap: calc(var(--magitek-pedestal-height) * 0.0186);
 
   /* Crown anchors (asset-calibrated, kept as % of HUD) */
@@ -89,12 +91,12 @@
 }
 
 /* Environment variable downgrade protocol:
-   If dvh is problematic locally, 100% baseline + html/body/root height=100% (see index.css) keeps SSOT stable. */
+   修復：分開處理 env()，避免 clamp() 與 env() 組合解析失敗 */
 @supports (padding: env(safe-area-inset-top)) {
   :global(:root) {
-    /* Use clamp so desktop stays at 0; mobile notch gets real inset (capped). */
-    --magitek-safe-top: clamp(0px, env(safe-area-inset-top, 0px), 44px);
-    --magitek-safe-bottom: clamp(0px, env(safe-area-inset-bottom, 0px), 34px);
+    /* 先取 env 值，再用 max/min 確保非負且不超過上限（PC=0，手機才生效） */
+    --magitek-safe-top: max(0px, min(env(safe-area-inset-top), 44px));
+    --magitek-safe-bottom: max(0px, min(env(safe-area-inset-bottom), 34px));
   }
 }
 

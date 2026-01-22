@@ -158,7 +158,8 @@
   min-height: 100%;
   /* 80/10/10 push: keep content reachable in the visible zone */
   /* Content-only avoidance: keep main content below HUD solid area (incl. safe-area) */
-  padding-top: calc(var(--hud-seal-point) + 2vh);
+  /* 修復：移除 2vh，改用固定值避免手機瀏覽器工具列漂移 */
+  padding-top: calc(var(--hud-seal-point) + 16px);
   padding-bottom: 2rem;
   background: transparent;
 
