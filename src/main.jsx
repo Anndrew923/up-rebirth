@@ -1,7 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './styles/MagitekTokens.css'
-import './styles/modules/ChassisGeometry.module.css'
+import './styles/ChassisGeometry.css'
 import './index.css'
 import App from './App.jsx'
 

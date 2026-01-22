@@ -1,7 +1,7 @@
 /**
  * Crown (HUD Top Bar) Styles
  * Extracted from MagitekChassis.module.css
- * Geometry SSOT: src/styles/modules/ChassisGeometry.module.css
+ * Geometry SSOT: src/styles/ChassisGeometry.css
  */
 
 /* Diagnostic toggles (bound to root className) */
@@ -18,9 +18,10 @@
   height: var(--hud-seal-point); /* stop at seal line */
   z-index: 50;
   pointer-events: none;
-  background: rgba(0, 0, 0, 0.22);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  /* 毛玻璃透明度校準：降低背景遮罩，確保雷達粒子流清晰可見 */
+  background: rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   -webkit-mask-image: linear-gradient(
     to bottom,
     rgba(255, 255, 255, 1) 0,
@@ -189,4 +190,3 @@
     drop-shadow(0 0 14px var(--magitek-cyan))
     drop-shadow(0 0 28px rgba(0, 191, 255, 0.45));
 }
-

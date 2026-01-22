@@ -261,8 +261,8 @@
   /* Compensate height to keep it filling the screen */
   height: calc(100% - (var(--hud-seal-point) - var(--hud-visual-overlap)));
   /* NOTE: No padding here — structure must "grow" into overlap zone. */
-  /* 向上微調產生重疊，避免亞像素漏光 */
-  margin-top: var(--magitek-overlap-neg);
+  /* 霓虹燈手術刀：向上微調產生重疊，避免亞像素漏光 */
+  margin-top: -2px;
   pointer-events: none;
   z-index: 35;
 }

@@ -1,0 +1,115 @@
+/**
+ * ChassisGeometry SSOT
+ * - Consolidates all chassis math (HUD / rails / pedestal)
+ * - Safe-area baseline uses env(safe-area-inset-*)
+ * - Ghost Exorcism Protocol: -2px overlaps to prevent sub-pixel leakage
+ * 
+ * 修復：改為普通 CSS 文件（非 Module），確保變數能正確應用到 :root
+ */
+
+:root {
+  /* =========================================================
+     Production Alignment Guard (V6 Hardware Lock)
+     ========================================================= */
+
+  /* Dynamic viewport height (prevents mobile URL-bar drift)
+     修復：統一基準面為 100vh，確保所有環境一致 */
+  --magitek-viewport-h: 100vh;
+
+  /* Safe area baselines (解除硬化補償：PC=0，手機才生效)
+     Default to 0 so desktop/local never shifts. */
+  --magitek-safe-top: 0px;
+  --magitek-safe-bottom: 0px;
+
+  /* Ghost Exorcism overlap */
+  --magitek-overlap: 2px;
+  --magitek-overlap-neg: calc(-1 * var(--magitek-overlap));
+
+  /* Asset ratios (intrinsic) */
+  /* 修復：直接寫 px，移除無效的 calc(1710 * 1px) 語法 */
+  --magitek-hud-asset-w: 1710px;
+  --magitek-hud-asset-h: 534px;
+  /* Hard-coded (do NOT depend on runtime image dimensions) */
+  --magitek-hud-frame-ratio: 0.3122807018;
+  --magitek-hud-frame-ratio-pct: 31.228%;
+
+  --magitek-pedestal-asset-w: 1284px;
+  --magitek-pedestal-asset-h: 429px;
+  /* Hard-coded (do NOT depend on runtime image dimensions) */
+  --magitek-pedestal-ratio: 0.3341121495;
+
+  /* HUD physical boundary SSOT */
+  --magitek-hud-width: clamp(320px, calc(100vw - 24px), 1100px);
+  --magitek-hud-height: calc(var(--magitek-hud-width, 1100px) * var(--magitek-hud-frame-ratio, 0.3122807018));
+
+  /* Mounting geometry (safe area is the hard baseline) */
+  --magitek-hud-overlap-ratio: 0.33;
+  --magitek-hud-visual-overlap: calc(var(--magitek-hud-height, 343px) * var(--magitek-hud-overlap-ratio, 0.33));
+  /* Depth alignment: small safety margin to prevent HUD masking "mis-hit" on tall glow content */
+  --magitek-hud-seal-point: calc(var(--magitek-safe-top, 0px) + var(--magitek-hud-height, 343px) - var(--magitek-overlap, 2px) + 8px);
+  --magitek-hud-deep-mount-top: calc(var(--magitek-hud-seal-point, 349px) - var(--magitek-hud-visual-overlap, 113px));
+
+  /* Pedestal SSOT */
+  --magitek-pedestal-width: min(1284px, 100vw);
+  --magitek-pedestal-height: calc(var(--magitek-pedestal-width, 1284px) * var(--magitek-pedestal-ratio, 0.3341121495));
+
+  /* Bottom occlusion sizing */
+  --magitek-chassis-buffer-base: 2rem;
+  --magitek-chassis-bottom-metal-height: calc(var(--magitek-pedestal-height, 429px) + var(--magitek-safe-bottom, 0px));
+  --magitek-chassis-bottom-height: calc(var(--magitek-chassis-bottom-metal-height, 429px) + var(--magitek-chassis-buffer-base, 2rem));
+
+  /* Mask feather widths */
+  /* 修復：移除 vh 單位，改用固定值避免手機瀏覽器工具列漂移 */
+  --magitek-hud-mask-feather: 16px;
+  --magitek-pedestal-mask-feather: 16px;
+
+  /* Rail width SSOT */
+  --magitek-rail-width: clamp(52px, 12vw, 140px);
+
+  /* Nav nodes (derive from rail width) */
+  --magitek-rail-inset-x: 8px;
+  --magitek-node-size: clamp(44px, calc(var(--magitek-rail-width) * 0.38), 56px);
+  --magitek-node-font-size: clamp(16px, calc(var(--magitek-node-size) * 0.40), 20px);
+  /* 修復：移除 vh 單位，改用固定值避免手機瀏覽器工具列漂移 */
+  --magitek-node-offset-1: 90px;
+  --magitek-node-offset-2: 200px;
+  --magitek-node-offset-3: 300px;
+  --magitek-rail-pedestal-overlap: calc(var(--magitek-pedestal-height) * 0.0186);
+
+  /* Crown anchors (asset-calibrated, kept as % of HUD) */
+  --magitek-hud-avatar-left: 15.526%;
+  --magitek-hud-avatar-top: 50.5%;
+  --magitek-hud-hole-ratio: 17.3%;
+  --magitek-hud-hole-overflow: 2.7%;
+  --magitek-hud-bell-right: 5%;
+  --magitek-hud-bell-y: 50%;
+  --magitek-hud-bell-size: 9.94%;
+}
+
+@supports (height: 100dvh) {
+  :root {
+    --magitek-viewport-h: 100dvh;
+  }
+}
+
+/* Environment variable downgrade protocol:
+   修復：使用 max/min 組合替代 clamp，確保在所有環境下都能正確解析 */
+@supports (padding: env(safe-area-inset-top)) {
+  :root {
+    /* 使用 max/min 組合：確保值在 0px 到上限之間（PC=0，手機才生效） */
+    --magitek-safe-top: max(0px, min(env(safe-area-inset-top, 0px), 44px));
+    --magitek-safe-bottom: max(0px, min(env(safe-area-inset-bottom, 0px), 34px));
+  }
+}
+
+@media (min-width: 768px) {
+  :root {
+    --magitek-chassis-buffer-base: 5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --magitek-chassis-buffer-base: 8rem;
+  }
+}
